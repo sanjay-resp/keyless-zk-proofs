@@ -7,13 +7,10 @@ ARG TARGETARCH
 RUN apt-get update \
     && apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev
 
-COPY --link src src
-COPY --link .cargo .cargo
-COPY --link rust-rapidsnark rust-rapidsnark
-COPY --link Cargo.toml Cargo.lock ./
+COPY --link . .
 
 # Build gmp separately so that docker will cache this step
-RUN cargo build --release && \
+RUN cargo build --release -p prover-service && \
     cp target/release/prover-service /prover-service-bin
 
 FROM debian:12.4
@@ -23,7 +20,7 @@ RUN apt-get update \
 
 # copy prover server
 COPY --link --from=build_prover_service ./prover-service-bin ./prover-service-bin
-COPY --link --from=build_prover_service ./rust-rapidsnark/rapidsnark/package ./rapidsnark-package
+COPY --link --from=build_prover_service ./prover/rust-rapidsnark/rapidsnark/package ./rapidsnark-package
 
 
 ARG TRUSTLESS_REPO_GIT_SHA=ae684b376059c791ded97d89c3ca114edc1cb44c
@@ -45,8 +42,8 @@ RUN chmod u+x /resources/setup_2024_05/main_c
 #RUN chmod u+x /resources/setup_2024_02/main_c
 
 
-COPY --link ./config.yml ./config.yml
-COPY --link ./conversion_config.yml ./conversion_config.yml
+COPY --link ./prover/config.yml ./config.yml
+COPY --link ./prover/conversion_config.yml ./conversion_config.yml
 
 EXPOSE 8080
 
