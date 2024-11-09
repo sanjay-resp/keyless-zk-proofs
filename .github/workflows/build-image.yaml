@@ -50,6 +50,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./prover/Dockerfile
           push: true
           tags: |
             us-docker.pkg.dev/aptos-registry/docker/prover-service:latest
