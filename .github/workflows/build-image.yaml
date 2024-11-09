@@ -49,7 +49,7 @@ jobs:
         # uses: depot/build-push-action@v1
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./prover
           push: true
           tags: |
             us-docker.pkg.dev/aptos-registry/docker/prover-service:latest
