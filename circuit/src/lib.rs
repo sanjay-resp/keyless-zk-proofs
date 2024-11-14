@@ -40,20 +40,20 @@ impl TestCircuitHandle {
         let cargo_manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let include_root_dir = cargo_manifest_dir.join("templates");
         let src_circuit_path = include_root_dir.join("tests").join(file_name);
-        println!("src_circuit_path={:?}", src_circuit_path);
-        println!("cwd={:?}", env::current_dir());
-        let content = fs::read_to_string(src_circuit_path).unwrap();
+        let content = fs::read_to_string(src_circuit_path)?;
         Self::new_from_str(content.as_str())
     }
 
     pub fn new_from_str(circuit_src: &str) -> anyhow::Result<Self> {
-        let dir = tempdir()?;
+        let dir = tempdir().unwrap();
         let cargo_manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let include_root_dir = cargo_manifest_dir.join("./templates");
         let tmp_circuit_path = dir.path().to_owned().join("circuit.circom");
-        let mut tmp_circuit_file = File::create(&tmp_circuit_path)?;
+        println!("tmp_circuit_path={:?}", tmp_circuit_path);
+        let mut tmp_circuit_file = File::create(&tmp_circuit_path).unwrap();
         let global_node_modules_path =
             String::from_utf8(Command::new("npm").args(["root", "-g"]).output()?.stdout).unwrap();
+        println!("global_node_modules_path={}", global_node_modules_path);
         tmp_circuit_file.write_all(circuit_src.as_bytes())?;
         let output = Command::new("circom")
             .args([
@@ -68,8 +68,8 @@ impl TestCircuitHandle {
                 dir.path().to_str().unwrap(),
             ])
             .output()?;
-        println!("{}", String::from_utf8_lossy(&output.stdout));
-        println!("{}", String::from_utf8_lossy(&output.stderr));
+        println!("stdout={}", String::from_utf8_lossy(&output.stdout));
+        println!("stderr={}", String::from_utf8_lossy(&output.stderr));
         ensure!(output.status.success());
         Ok(Self { dir })
     }
