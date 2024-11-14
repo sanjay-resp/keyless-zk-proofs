@@ -33,19 +33,12 @@ jobs:
         with:
           submodules: 'recursive'
       #- uses: aptos-labs/aptos-core/.github/actions/rust-setup@main
-      - run: whoami
-      - run: groups
-      - run: ls -l /home/runner/work/keyless-zk-proofs/keyless-zk-proofs/circuit/templates/tests/base64_decode_test.circom
-      - run: ls -l /home/runner/work/keyless-zk-proofs/keyless-zk-proofs/circuit/templates/tests
-      - run: ls -l /home/runner/work/keyless-zk-proofs/keyless-zk-proofs/circuit/templates
-      - run: ls -l /home/runner/work/keyless-zk-proofs/keyless-zk-proofs/circuit
-      - run: ls -l /home/runner/work/keyless-zk-proofs/keyless-zk-proofs
-      - run: ls -l /home/runner/work/keyless-zk-proofs
-      - run: mkdir -p ~/.local/share/aptos-prover-service/setup_2024_05
-      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/prover_key.zkey https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c.zkey
-      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c
-      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat
-      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/verification_key.json https://github.com/aptos-labs/devnet-groth16-keys/raw/master/verification_key.json
+      - run: ./dev_setup.sh
+#      - run: mkdir -p ~/.local/share/aptos-prover-service/setup_2024_05
+#      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/prover_key.zkey https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c.zkey
+#      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c
+#      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat
+#      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/verification_key.json https://github.com/aptos-labs/devnet-groth16-keys/raw/master/verification_key.json
       - run: chmod -R 777 ~/.local/share/aptos-prover-service
       - run: sudo apt-get update -y && sudo apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev
       - run: LD_LIBRARY_PATH=./prover/rust-rapidsnark/rapidsnark/package/lib cargo test
