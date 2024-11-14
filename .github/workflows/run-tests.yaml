@@ -29,7 +29,8 @@ jobs:
     env:
       CARGO_TERM_COLOR: always
     steps:
-      - run: which node
+      - run: npm install -g circomlib@2.0.5
+      - run: npm install -g snarkjs
 #      - uses: actions/checkout@v4
 #        with:
 #          submodules: 'recursive'
