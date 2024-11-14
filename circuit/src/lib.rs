@@ -54,7 +54,7 @@ impl TestCircuitHandle {
         let global_node_modules_path =
             String::from_utf8(Command::new("npm").args(["root", "-g"]).output()?.stdout).unwrap();
         println!("global_node_modules_path={}", global_node_modules_path);
-        tmp_circuit_file.write_all(circuit_src.as_bytes())?;
+        tmp_circuit_file.write_all(circuit_src.as_bytes()).unwrap();
         let output = Command::new("circom")
             .args([
                 "-l",
@@ -67,7 +67,7 @@ impl TestCircuitHandle {
                 "-o",
                 dir.path().to_str().unwrap(),
             ])
-            .output()?;
+            .output().unwrap();
         println!("stdout={}", String::from_utf8_lossy(&output.stdout));
         println!("stderr={}", String::from_utf8_lossy(&output.stderr));
         ensure!(output.status.success());
