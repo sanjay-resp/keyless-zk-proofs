@@ -41,6 +41,7 @@ impl TestCircuitHandle {
         let include_root_dir = cargo_manifest_dir.join("./templates");
         let src_circuit_path = include_root_dir.join("tests").join(file_name);
         println!("src_circuit_path={:?}", src_circuit_path);
+        println!("cwd={:?}", env::current_dir());
         let content = fs::read_to_string(src_circuit_path)?;
         Self::new_from_str(content.as_str())
     }
