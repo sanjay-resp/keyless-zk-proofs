@@ -40,4 +40,4 @@ jobs:
       - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/verification_key.json https://github.com/aptos-labs/devnet-groth16-keys/raw/master/verification_key.json
       - run: chmod -R 777 ~/.local/share/aptos-prover-service
       - run: sudo apt-get update -y && sudo apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev
-      - run: LD_LIBRARY_PATH=./rust-rapidsnark/rapidsnark/package/lib cargo test 
+      - run: LD_LIBRARY_PATH=./prover/rust-rapidsnark/rapidsnark/package/lib cargo test
