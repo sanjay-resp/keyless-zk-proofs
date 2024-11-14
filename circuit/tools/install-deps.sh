@@ -46,6 +46,7 @@ install_pip3_deps() {
 }
 
 install_npm_deps() {
+    echo `which npm`
     echo "snarkjs installation started."
     npm install -g snarkjs
     echo "snarkjs installation finished."
