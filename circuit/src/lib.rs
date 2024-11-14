@@ -38,7 +38,7 @@ impl TestCircuitHandle {
     /// Compile the circuit in the given file using BN254 as the underlying curve.
     pub fn new(file_name: &str) -> anyhow::Result<Self> {
         let cargo_manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        let include_root_dir = cargo_manifest_dir.join("./templates");
+        let include_root_dir = cargo_manifest_dir.join("templates");
         let src_circuit_path = include_root_dir.join("tests").join(file_name);
         println!("src_circuit_path={:?}", src_circuit_path);
         println!("cwd={:?}", env::current_dir());
