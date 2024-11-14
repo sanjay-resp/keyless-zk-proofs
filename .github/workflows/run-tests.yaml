@@ -37,6 +37,7 @@ jobs:
       - run: npm root -g
       - run: ls -l /usr/local/lib/node_modules
       - run: npm config get prefix
+      - run: ls /usr/local
 #      - run: mkdir -p ~/.local/share/aptos-prover-service/setup_2024_05
 #      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/prover_key.zkey https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c.zkey
 #      - run: curl --location -o ~/.local/share/aptos-prover-service/setup_2024_05/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c
