@@ -51,7 +51,7 @@ impl TestCircuitHandle {
         let tmp_circuit_path = dir.path().to_owned().join("circuit.circom");
         let mut tmp_circuit_file = File::create(&tmp_circuit_path).unwrap();
         let global_node_modules_path =
-            String::from_utf8(Command::new("bash").args(["-c", ". ~/.bashrc && export && npm root -g"]).output()?.stdout).unwrap();
+            String::from_utf8(Command::new("npm").args(["root", "-g"]).output()?.stdout).unwrap();
         println!("global_node_modules_path={}", global_node_modules_path);
         tmp_circuit_file.write_all(circuit_src.as_bytes()).unwrap();
         let output = Command::new("circom")
