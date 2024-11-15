@@ -45,12 +45,12 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
 
-#      - name: Build and push
-#        uses: docker/build-push-action@v5
-#        with:
-#          context: .
-#          file: ./prover/Dockerfile
-#          push: true
-#          tags: |
-#            us-docker.pkg.dev/aptos-registry/docker/prover-service:latest
-#            us-docker.pkg.dev/aptos-registry/docker/prover-service:${{ github.sha }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./prover/Dockerfile
+          push: true
+          tags: |
+            us-docker.pkg.dev/aptos-registry/docker/prover-service:latest
+            us-docker.pkg.dev/aptos-registry/docker/prover-service:${{ github.sha }}

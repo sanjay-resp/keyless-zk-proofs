@@ -32,9 +32,6 @@ jobs:
         with:
           submodules: 'recursive'
       - run: bash ./dev_setup.sh
-      - run: npm root -g
-      - run: which npm
       - run: chmod -R 777 ~/.local/share/aptos-prover-service
       - run: sudo apt-get update -y && sudo apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev
-      - run: realpath .
       - run: LD_LIBRARY_PATH=$(pwd)/prover/rust-rapidsnark/rapidsnark/package/lib cargo test
