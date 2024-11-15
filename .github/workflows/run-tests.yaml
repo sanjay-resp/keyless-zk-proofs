@@ -43,4 +43,4 @@ jobs:
       - run: chmod -R 777 ~/.local/share/aptos-prover-service
       - run: sudo apt-get update -y && sudo apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev
       - run: export
-      - run: LD_LIBRARY_PATH=./prover/rust-rapidsnark/rapidsnark/package/lib cargo test
+      - run: LD_LIBRARY_PATH=./rust-rapidsnark/rapidsnark/package/lib cargo test
