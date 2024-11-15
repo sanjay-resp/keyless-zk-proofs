@@ -57,7 +57,7 @@ install_circomlib() {
     echo "circomlib@2.0.5 installation finished."
 }
 
-install_node
+#install_node
 install_pip3_deps
 install_npm_deps
 install_circomlib
