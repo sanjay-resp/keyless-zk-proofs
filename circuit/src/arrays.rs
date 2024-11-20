@@ -4,7 +4,7 @@
 use crate::TestCircuitHandle;
 use aptos_crypto::poseidon_bn254;
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 use ark_bn254::Fr;
 use ark_ff::{One, Zero};
@@ -24,8 +24,7 @@ fn array_selector_test() {
     for start in 0..out_len {
         for end in start + 1..=out_len {
             let output = build_array_selector_output(out_len, start, end);
-            let config =
-                CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+            let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
             let circuit_input_signals = CircuitInputSignals::new()
                 .u64_input("start_index", start as u64)
                 .u64_input("end_index", end as u64)
@@ -49,7 +48,7 @@ fn array_selector_test_large() {
         let end = rng.gen_range(start + 1, 2001);
 
         let output = build_array_selector_output(out_len, start, end);
-        let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+        let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
         let circuit_input_signals = CircuitInputSignals::new()
             .u64_input("start_index", start as u64)
             .u64_input("end_index", end as u64)
@@ -69,7 +68,7 @@ fn array_selector_test_small() {
     let start = 0;
     let end = 1;
     let output = build_array_selector_output(out_len, start, end);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("start_index", start as u64)
         .u64_input("end_index", end as u64)
@@ -89,7 +88,7 @@ fn array_selector_test_wrong_start() {
     let start = 3;
     let end = 3;
     let output = build_array_selector_output(out_len, start, end);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("start_index", start as u64)
         .u64_input("end_index", end as u64)
@@ -110,8 +109,7 @@ fn array_selector_test_complex() {
     for start in 1..out_len {
         for end in start + 1..=out_len {
             let output = build_array_selector_output(out_len, start, end);
-            let config =
-                CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+            let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
             let circuit_input_signals = CircuitInputSignals::new()
                 .u64_input("start_index", start as u64)
                 .u64_input("end_index", end as u64)
@@ -132,7 +130,7 @@ fn array_selector_test_complex_large() {
     let start = 157;
     let end = 1143;
     let output = build_array_selector_output(out_len, start, end);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("start_index", start as u64)
         .u64_input("end_index", end as u64)
@@ -152,7 +150,7 @@ fn array_selector_test_complex_small() {
     let start = 1;
     let end = 2;
     let output = build_array_selector_output(out_len, start, end);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("start_index", start as u64)
         .u64_input("end_index", end as u64)
@@ -172,7 +170,7 @@ fn array_selector_test_complex_wrong_start() {
     let start = 3;
     let end = 3;
     let output = build_array_selector_output(out_len, start, end);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("start_index", start as u64)
         .u64_input("end_index", end as u64)
@@ -196,7 +194,7 @@ fn left_array_selector_test() {
     let out_len = 8;
     for index in 0..=out_len {
         let output = build_left_array_selector_output(out_len, index);
-        let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+        let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
         let circuit_input_signals = CircuitInputSignals::new()
             .u64_input("index", index as u64)
             .bytes_input("expected_output", &output[..])
@@ -215,7 +213,7 @@ fn left_array_selector_test_large() {
     let mut rng = thread_rng();
     let index = rng.gen_range(0, 2000);
     let output = build_left_array_selector_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("expected_output", &output)
@@ -233,7 +231,7 @@ fn left_array_selector_test_small() {
     let out_len = 1;
     let index = 0;
     let output = build_left_array_selector_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("expected_output", &output)
@@ -258,7 +256,7 @@ fn right_array_selector_test() {
     let out_len = 8;
     for index in 0..=out_len {
         let output = build_right_array_selector_output(out_len, index);
-        let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+        let config = CircuitConfig::new().max_length("expected_output", out_len);
         let circuit_input_signals = CircuitInputSignals::new()
             .u64_input("index", index as u64)
             .bytes_input("expected_output", &output[..])
@@ -277,7 +275,7 @@ fn right_array_selector_test_large() {
     let mut rng = rand::thread_rng();
     let index = rng.gen_range(0, 2001);
     let output = build_right_array_selector_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+    let config = CircuitConfig::new().max_length("expected_output", out_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("expected_output", &output)
@@ -295,7 +293,7 @@ fn right_array_selector_test_small() {
     let out_len = 1;
     let index = 0;
     let output = build_left_array_selector_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("expected_output", &output)
@@ -321,7 +319,7 @@ fn single_one_array_test() {
     let out_len = 8;
     for index in 0..=out_len {
         let output = build_single_one_array_output(out_len, index);
-        let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+        let config = CircuitConfig::new().max_length("expected_output", out_len);
         let circuit_input_signals = CircuitInputSignals::new()
             .u64_input("index", index as u64)
             .bytes_input("expected_output", &output)
@@ -341,7 +339,7 @@ fn single_one_array_large_test() {
     let mut rng = rand::thread_rng();
     let index = rng.gen_range(0, 2001);
     let output = build_single_one_array_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+    let config = CircuitConfig::new().max_length("expected_output", out_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("expected_output", &output)
@@ -359,7 +357,7 @@ fn single_one_array_small_test() {
     let out_len = 1;
     let index = 0;
     let output = build_single_one_array_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+    let config = CircuitConfig::new().max_length("expected_output", out_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("expected_output", &output)
@@ -379,7 +377,7 @@ fn select_array_value_test() {
     let in_len = array.len();
     for index in 0..in_len {
         let output = array[index];
-        let config = CircuitPaddingConfig::new().max_length("array", in_len);
+        let config = CircuitConfig::new().max_length("array", in_len);
         let circuit_input_signals = CircuitInputSignals::new()
             .u64_input("index", index as u64)
             .bytes_input("array", &array[..])
@@ -402,7 +400,7 @@ fn select_array_value_large_test() {
     let index = 1567;
     let in_len = input.len();
     let output = input[index];
-    let config = CircuitPaddingConfig::new().max_length("array", in_len);
+    let config = CircuitConfig::new().max_length("array", in_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("array", &input)
@@ -423,7 +421,7 @@ fn select_array_value_small_test() {
     let index = 0;
     let in_len = array.len();
     let output = array[index];
-    let config = CircuitPaddingConfig::new().max_length("array", in_len);
+    let config = CircuitConfig::new().max_length("array", in_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("array", &array)
@@ -444,7 +442,7 @@ fn select_array_value_test_wrong_index() {
     let mut rng = rand::thread_rng();
     let output: Vec<u8> = (0..8).map(|_| rng.gen_range(0, 250)).collect();
 
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len as usize);
+    let config = CircuitConfig::new().max_length("expected_output", out_len as usize);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .bytes_input("expected_output", &output)
@@ -469,7 +467,7 @@ fn single_neg_one_array_test() {
     let out_len = 8;
     for index in 0..=out_len {
         let output = build_single_neg_one_array_output(out_len, index);
-        let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+        let config = CircuitConfig::new().max_length("expected_output", out_len);
         let circuit_input_signals = CircuitInputSignals::new()
             .u64_input("index", index as u64)
             .frs_input("expected_output", &output)
@@ -489,7 +487,7 @@ fn single_neg_one_array_large_test() {
     let mut rng = rand::thread_rng();
     let index = rng.gen_range(0, 2001);
     let output = build_single_neg_one_array_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+    let config = CircuitConfig::new().max_length("expected_output", out_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .frs_input("expected_output", &output)
@@ -507,7 +505,7 @@ fn single_neg_one_array_small_test() {
     let out_len = 1;
     let index = 0;
     let output = build_single_neg_one_array_output(out_len, index);
-    let config = CircuitPaddingConfig::new().max_length("expected_output", out_len);
+    let config = CircuitConfig::new().max_length("expected_output", out_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("index", index as u64)
         .frs_input("expected_output", &output)
@@ -525,7 +523,7 @@ fn check_substr_inclusion_poly_test() {
 
     let max_str_len = 100;
     let max_substr_len = 20;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string = "Hello World!";
@@ -559,7 +557,7 @@ fn check_substr_inclusion_poly_no_padding_test() {
     let string = "Hello World!";
     let max_str_len = string.len();
     let max_substr_len = 11;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string_len = string.len();
@@ -590,7 +588,7 @@ fn check_substr_inclusion_poly_same_test() {
     let string = "Hello World!";
     let max_str_len = 100;
     let max_substr_len = 20;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string_hash = poseidon_bn254::pad_and_hash_string(string, max_str_len).unwrap();
@@ -618,7 +616,7 @@ fn check_substr_inclusion_poly_large_test() {
 
     let max_str_len = 2000;
     let max_substr_len = 1000;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string = "Once upon a midnight dreary, while I pondered, weak and weary,
@@ -651,7 +649,7 @@ fn check_substr_inclusion_poly_small_test() {
 
     let max_str_len = 100;
     let max_substr_len = 20;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string = "a";
@@ -695,7 +693,7 @@ fn check_substr_inclusion_poly_edge_case_test() {
     let substr: &'static [u8] = &[0u8, 0, 0, 0, 0, 0, 5, 192];
     let start_index = 248;
 
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", 256)
         .max_length("substr", 8);
 
@@ -720,7 +718,7 @@ fn check_substr_inclusion_poly_boolean_test() {
 
     let max_str_len = 100;
     let max_substr_len = 20;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string = "Hello World!";
@@ -755,7 +753,7 @@ fn check_substr_inclusion_poly_no_padding_boolean_test() {
     let string = "Hello World!";
     let max_str_len = string.len();
     let max_substr_len = 11;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string_len = string.len();
@@ -787,7 +785,7 @@ fn check_substr_inclusion_poly_same_boolean_test() {
     let string = "Hello World!";
     let max_str_len = 100;
     let max_substr_len = 20;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string_hash = poseidon_bn254::pad_and_hash_string(string, max_str_len).unwrap();
@@ -817,7 +815,7 @@ fn check_substr_inclusion_poly_large_boolean_test() {
 
     let max_str_len = 2000;
     let max_substr_len = 1000;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string = "Once upon a midnight dreary, while I pondered, weak and weary,
@@ -851,7 +849,7 @@ fn check_substr_inclusion_poly_small_boolean_test() {
 
     let max_str_len = 100;
     let max_substr_len = 20;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("str", max_str_len)
         .max_length("substr", max_substr_len);
     let string = "a";
@@ -881,7 +879,7 @@ fn concatenation_check_test() {
     let max_full_str_len = 100;
     let max_left_str_len = 70;
     let max_right_str_len = 70;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("full_string", max_full_str_len)
         .max_length("left", max_left_str_len)
         .max_length("right", max_right_str_len);
@@ -915,7 +913,7 @@ fn concatenation_check_left_len_wrong_test() {
     let max_full_str_len = 100;
     let max_left_str_len = 70;
     let max_right_str_len = 70;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("full_string", max_full_str_len)
         .max_length("left", max_left_str_len)
         .max_length("right", max_right_str_len);
@@ -947,7 +945,7 @@ fn concatenation_check_left_string_wrong_test() {
     let max_full_str_len = 100;
     let max_left_str_len = 70;
     let max_right_str_len = 70;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("full_string", max_full_str_len)
         .max_length("left", max_left_str_len)
         .max_length("right", max_right_str_len);
@@ -979,7 +977,7 @@ fn concatenation_check_right_string_wrong_test() {
     let max_full_str_len = 100;
     let max_left_str_len = 70;
     let max_right_str_len = 70;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("full_string", max_full_str_len)
         .max_length("left", max_left_str_len)
         .max_length("right", max_right_str_len);
@@ -1012,7 +1010,7 @@ fn concatenation_check_small_test() {
     let max_full_str_len = 2;
     let max_left_str_len = 1;
     let max_right_str_len = 1;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("full_string", max_full_str_len)
         .max_length("left", max_left_str_len)
         .max_length("right", max_right_str_len);
@@ -1044,7 +1042,7 @@ fn concatenation_check_large_test() {
     let max_full_str_len = 1600;
     let max_left_str_len = 1000;
     let max_right_str_len = 1000;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("full_string", max_full_str_len)
         .max_length("left", max_left_str_len)
         .max_length("right", max_right_str_len);
@@ -1085,7 +1083,7 @@ fn check_are_ascii_digits_test() {
     input_arr.append(&mut not_digits);
 
     let len = 5;
-    let config = CircuitPaddingConfig::new().max_length("in", max_input_len);
+    let config = CircuitConfig::new().max_length("in", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len)
         .bytes_input("in", &input_arr)
@@ -1105,7 +1103,7 @@ fn check_are_ascii_digits_max_len_test() {
     let digits: Vec<u8> = (0..8).map(|_| rng.gen_range(0, 9)).collect();
     let input_arr = digits_to_ascii_digits(digits.to_vec());
     let len = input_arr.len();
-    let config = CircuitPaddingConfig::new().max_length("in", max_input_len);
+    let config = CircuitConfig::new().max_length("in", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len as u64)
         .bytes_input("in", &input_arr)
@@ -1125,7 +1123,7 @@ fn check_are_ascii_digits_small_test() {
     let digits: Vec<u8> = (0..1).map(|_| rng.gen_range(0, 9)).collect();
     let input_arr = digits_to_ascii_digits(digits.to_vec());
     let len = 1;
-    let config = CircuitPaddingConfig::new().max_length("in", max_input_len);
+    let config = CircuitConfig::new().max_length("in", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len)
         .bytes_input("in", &input_arr)
@@ -1146,7 +1144,7 @@ fn check_are_ascii_digits_large_test() {
     let input_arr = digits_to_ascii_digits(digits.to_vec());
 
     let len = input_arr.len();
-    let config = CircuitPaddingConfig::new().max_length("in", max_input_len);
+    let config = CircuitConfig::new().max_length("in", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len as u64)
         .bytes_input("in", &input_arr)
@@ -1175,7 +1173,7 @@ fn ascii_digits_to_field_test() {
     let ascii_digits = digits_to_ascii_digits(digits.to_vec());
     let len = 5;
     let expected_output = 21247;
-    let config = CircuitPaddingConfig::new().max_length("digits", max_input_len);
+    let config = CircuitConfig::new().max_length("digits", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len)
         .bytes_input("digits", &ascii_digits)
@@ -1196,7 +1194,7 @@ fn ascii_digits_to_field_small_test() {
     let ascii_digits = digits_to_ascii_digits(digits.to_vec());
     let len = 1;
     let expected_output = 7;
-    let config = CircuitPaddingConfig::new().max_length("digits", max_input_len);
+    let config = CircuitConfig::new().max_length("digits", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len)
         .bytes_input("digits", &ascii_digits)
@@ -1224,7 +1222,7 @@ fn ascii_digits_to_field_large_test() {
 
     let len = 19;
     let expected_output = 2124748019218367415;
-    let config = CircuitPaddingConfig::new().max_length("digits", max_input_len);
+    let config = CircuitConfig::new().max_length("digits", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len)
         .bytes_input("digits", &ascii_digits)
@@ -1246,7 +1244,7 @@ fn ascii_digits_to_field_not_ascii_digits_test() {
     let ascii_digits = digits_to_ascii_digits(digits.to_vec());
     let len = 5;
     let expected_output = 21247;
-    let config = CircuitPaddingConfig::new().max_length("digits", max_input_len);
+    let config = CircuitConfig::new().max_length("digits", max_input_len);
     let circuit_input_signals = CircuitInputSignals::new()
         .u64_input("len", len)
         .bytes_input("digits", &ascii_digits)

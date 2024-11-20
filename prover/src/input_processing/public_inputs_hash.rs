@@ -4,13 +4,13 @@ use super::{field_check_input, field_parser::FieldParser};
 use crate::input_processing::types::Input;
 use anyhow::{anyhow, Result};
 use aptos_crypto::poseidon_bn254;
-use aptos_keyless_common::input_processing::config::CircuitPaddingConfig;
+use aptos_keyless_common::input_processing::config::CircuitConfig;
 use aptos_types::keyless::{Configuration, IdCommitment};
 use ark_bn254::Fr;
 
 pub fn compute_idc_hash(
     input: &Input,
-    config: &CircuitPaddingConfig,
+    config: &CircuitConfig,
     pepper_fr: Fr,
     jwt_payload: &str,
 ) -> Result<Fr> {
@@ -63,10 +63,7 @@ pub fn compute_temp_pubkey_frs(input: &Input) -> Result<([Fr; 3], Fr)> {
     ))
 }
 
-pub fn compute_public_inputs_hash(
-    input: &Input,
-    config: &CircuitPaddingConfig,
-) -> anyhow::Result<Fr> {
+pub fn compute_public_inputs_hash(input: &Input, config: &CircuitConfig) -> anyhow::Result<Fr> {
     let pepper_fr = input.pepper_fr;
     let jwt_parts = &input.jwt_parts;
     let jwk = &input.jwk;
@@ -174,7 +171,7 @@ mod tests {
         poseidon_bn254,
     };
     use aptos_keyless_common::input_processing::{
-        config::CircuitPaddingConfig,
+        config::CircuitConfig,
         encoding::{FromB64, JwtParts},
         sha::with_sha_padding_bytes,
     };
@@ -215,6 +212,7 @@ mod tests {
             uid_key: String::from("sub"),
             extra_field: Some(String::from("family_name")),
             idc_aud: None,
+            skip_aud_checks: false,
         };
 
         let jwt_parts = &input.jwt_parts;
@@ -231,7 +229,7 @@ mod tests {
         )
         .unwrap();
 
-        let config: CircuitPaddingConfig = serde_yaml::from_str(
+        let config: CircuitConfig = serde_yaml::from_str(
             &fs::read_to_string("conversion_config.yml").expect("Unable to read file"),
         )
         .expect("should parse correctly");

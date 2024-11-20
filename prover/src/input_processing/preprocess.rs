@@ -40,5 +40,6 @@ pub fn decode_and_add_jwk(
         extra_field: rqi.extra_field,
         exp_horizon_secs: rqi.exp_horizon_secs,
         idc_aud: rqi.idc_aud,
+        skip_aud_checks: rqi.skip_aud_checks,
     })
 }

@@ -8,7 +8,7 @@ use crate::{
     input_processing::rsa::RsaPrivateKey,
     training_wheels::verification_logic::compute_nonce,
 };
-use aptos_keyless_common::input_processing::{config::CircuitPaddingConfig, encoding::FromFr};
+use aptos_keyless_common::input_processing::{config::CircuitConfig, encoding::FromFr};
 use aptos_types::{
     jwks::rsa::RSA_JWK, keyless::Pepper, transaction::authenticator::EphemeralPublicKey,
 };
@@ -151,6 +151,7 @@ pub struct ProofTestCase<T: Serialize + WithNonce + Clone> {
     pub extra_field: Option<String>,
     pub uid_key: String,
     pub idc_aud: Option<String>,
+    pub skip_aud_checks: bool,
 }
 
 impl<T: Serialize + WithNonce + Clone> ProofTestCase<T> {
@@ -164,7 +165,7 @@ impl<T: Serialize + WithNonce + Clone> ProofTestCase<T> {
         extra_field: Option<String>,
         uid_key: String,
         idc_aud: Option<String>,
-        config: &CircuitPaddingConfig,
+        config: &CircuitConfig,
     ) -> Self {
         let epk = gen_test_ephemeral_pk();
         let epk_blinder = gen_test_ephemeral_pk_blinder();
@@ -182,6 +183,7 @@ impl<T: Serialize + WithNonce + Clone> ProofTestCase<T> {
             extra_field,
             uid_key,
             idc_aud: idc_aud,
+            skip_aud_checks: false,
         }
     }
 
@@ -200,10 +202,11 @@ impl<T: Serialize + WithNonce + Clone> ProofTestCase<T> {
             extra_field: Some(String::from("name")),
             uid_key: String::from("email"),
             idc_aud: None,
+            skip_aud_checks: false,
         }
     }
 
-    pub fn compute_nonce(self, config: &CircuitPaddingConfig) -> Self {
+    pub fn compute_nonce(self, config: &CircuitConfig) -> Self {
         let nonce = compute_nonce(
             self.epk_expiry_time_secs,
             &self.epk,
@@ -233,6 +236,7 @@ impl<T: Serialize + WithNonce + Clone> ProofTestCase<T> {
             extra_field: self.extra_field.clone(),
             idc_aud: self.idc_aud.clone(),
             use_insecure_test_jwk: false,
+            skip_aud_checks: self.skip_aud_checks,
         }
     }
 }

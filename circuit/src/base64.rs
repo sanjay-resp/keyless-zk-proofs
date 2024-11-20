@@ -3,7 +3,7 @@
 
 use crate::TestCircuitHandle;
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 use itertools::*;
 
@@ -32,7 +32,7 @@ fn base64_decode_test() {
 
     let max_jwt_payload_len = 192 * 8 - 64;
     let max_ascii_jwt_payload_len = 3 * max_jwt_payload_len / 4;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("jwt_payload", max_jwt_payload_len)
         .max_length("ascii_jwt_payload", max_ascii_jwt_payload_len);
 
@@ -56,7 +56,7 @@ fn base64_lookup_test() {
         .chain([b'-', b'_']);
 
     for in_b64_char in base64_chars {
-        let config = CircuitPaddingConfig::new();
+        let config = CircuitConfig::new();
 
         let circuit_input_signals = CircuitInputSignals::new()
             .byte_input("in_b64_char", in_b64_char)
@@ -79,7 +79,7 @@ fn base64_decode_test_short_all_dashes() {
 
     let max_jwt_payload_len = 4;
     let max_ascii_jwt_payload_len = 3 * max_jwt_payload_len / 4;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("jwt_payload", max_jwt_payload_len)
         .max_length("ascii_jwt_payload", max_ascii_jwt_payload_len);
 
@@ -105,7 +105,7 @@ fn base64_decode_test_short_three_chars() {
 
     let max_jwt_payload_len = 4;
     let max_ascii_jwt_payload_len = 3 * max_jwt_payload_len / 4;
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("jwt_payload", max_jwt_payload_len)
         .max_length("ascii_jwt_payload", max_ascii_jwt_payload_len);
 
@@ -143,7 +143,7 @@ fn base64_decode_test_short_exhaustive() {
 
         let max_jwt_payload_len = 4;
         let max_ascii_jwt_payload_len = 3 * max_jwt_payload_len / 4;
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("jwt_payload", max_jwt_payload_len)
             .max_length("ascii_jwt_payload", max_ascii_jwt_payload_len);
 

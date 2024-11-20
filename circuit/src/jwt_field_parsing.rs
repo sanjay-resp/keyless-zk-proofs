@@ -3,7 +3,7 @@
 
 use crate::{misc::calc_string_bodies, TestCircuitHandle};
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 
 struct JWTField<T> {
@@ -140,7 +140,7 @@ fn email_verified_test<T: JWTFieldIndices + JWTFieldStr>(
 ) -> Result<tempfile::NamedTempFile, anyhow::Error> {
     let circuit_handle = TestCircuitHandle::new(test_circom_file).unwrap();
 
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("field", 30)
         .max_length("name", 20)
         .max_length("value", 10);
@@ -168,7 +168,7 @@ fn unquoted_test<T: JWTFieldIndices + JWTFieldStr>(
 ) -> Result<tempfile::NamedTempFile, anyhow::Error> {
     let circuit_handle = TestCircuitHandle::new(test_circom_file).unwrap();
 
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("field", 60)
         .max_length("name", 30)
         .max_length("value", 30);
@@ -196,7 +196,7 @@ fn quoted_test<T: JWTFieldIndices + JWTFieldStr>(
 ) -> Result<tempfile::NamedTempFile, anyhow::Error> {
     let circuit_handle = TestCircuitHandle::new(test_circom_file).unwrap();
 
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("field", 60)
         .max_length("field_string_bodies", 60)
         .max_length("name", 30)

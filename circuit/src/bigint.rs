@@ -3,7 +3,7 @@
 
 use crate::TestCircuitHandle;
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 use aptos_logger::info;
 use rand::{thread_rng, Rng};
@@ -83,9 +83,7 @@ fn common<F: FnMut() -> (Vec<u8>, Vec<u8>)>(mut a_b_provider: F, expected_output
         let b_bytes_le: Vec<u8> = b_bytes_be.into_iter().rev().collect();
         let b_limbs_le = bytes_le_into_limbs_le(b_bytes_le);
 
-        let config = CircuitPaddingConfig::new()
-            .max_length("a", 32)
-            .max_length("b", 32);
+        let config = CircuitConfig::new().max_length("a", 32).max_length("b", 32);
         let circuit_input_signals = CircuitInputSignals::new()
             .limbs_input("a", a_limbs_le.as_slice())
             .limbs_input("b", b_limbs_le.as_slice())

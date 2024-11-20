@@ -3,7 +3,7 @@
 
 use crate::TestCircuitHandle;
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig, sha,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig, sha,
 };
 use rand_chacha::{
     rand_core::{RngCore as _, SeedableRng as _},
@@ -40,7 +40,7 @@ fn sha_test() {
         let expected_output = hasher.finalize().to_vec();
         let expected_output_bits = bytes_to_bits_msb(expected_output);
 
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("padded_input_bits", 2048) // should align with the `max_num_blocks=4` in `sha_test.circom`.
             .max_length("expected_digest_bits", 256);
 
@@ -68,7 +68,7 @@ fn sha_padding_verify_test() {
         rng.fill_bytes(&mut input);
         let padded_input = sha::with_sha_padding_bytes(&input);
         let padded_input_byte_len = padded_input.len();
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("in", 256)
             .max_length("L_byte_encoded", 8)
             .max_length("padding_without_len", 64);
