@@ -2,7 +2,7 @@
 
 use super::{field_parser::ParsedField, types::Input};
 use crate::input_processing::field_parser::FieldParser;
-use anyhow::Result;
+use anyhow::{bail, Result};
 use aptos_keyless_common::input_processing::circuit_input_signals::{
     CircuitInputSignals, Unpadded,
 };
@@ -122,14 +122,17 @@ pub fn signals_for_field_with_key(
 //
 
 pub fn private_aud_value(input: &Input) -> Result<String> {
-    if input.skip_aud_checks {
-        Ok("".to_string())
-    } else if let Some(v) = &input.idc_aud {
-        Ok(v.clone())
-    } else {
-        let parsed_field =
-            FieldParser::find_and_parse_field(input.jwt_parts.payload_decoded()?.as_str(), "aud")?;
-        Ok(parsed_field.value)
+    match (input.skip_aud_checks, &input.idc_aud) {
+        (true, Some(_)) => bail!("there is no aud-based recovery in aud-less mode"),
+        (true, None) => Ok("".to_string()),
+        (false, Some(v)) => Ok(v.clone()),
+        (false, None) => {
+            let parsed_field = FieldParser::find_and_parse_field(
+                input.jwt_parts.payload_decoded()?.as_str(),
+                "aud",
+            )?;
+            Ok(parsed_field.value)
+        }
     }
 }
 
