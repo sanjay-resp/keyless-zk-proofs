@@ -7,7 +7,7 @@
 set -e
 
 scriptdir="$(cd "$(dirname "$0")" >/dev/null 2>&1 && pwd)"
-repodir=$scriptdir
+repodir="$scriptdir/.."
 
 echo "Executing from directory: $scriptdir"
 
@@ -84,14 +84,14 @@ proofgen() {
             {
                 echo
                 echo "(Re)compiling circuit. This will take several seconds..."
-                circom -l . main.circom --r1cs --wasm --sym 
+                circom -l `npm root -g` main.circom --r1cs --wasm --sym
             }
             popd
 
             echo
             echo "Running input_gen.py..."
             touch input.json
-            python3 input_gen.py
+            python3 tools/input_gen.py
             pushd templates/main_js
             {
                 echo
