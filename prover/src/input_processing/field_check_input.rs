@@ -122,7 +122,9 @@ pub fn signals_for_field_with_key(
 //
 
 pub fn private_aud_value(input: &Input) -> Result<String> {
-    if let Some(v) = &input.idc_aud {
+    if input.skip_aud_checks {
+        Ok("".to_string())
+    } else if let Some(v) = &input.idc_aud {
         Ok(v.clone())
     } else {
         let parsed_field =
