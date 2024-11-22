@@ -1,7 +1,7 @@
 use std::fs;
 
 use aptos_crypto::ed25519::Ed25519PrivateKey;
-use aptos_keyless_common::input_processing::config::CircuitPaddingConfig;
+use aptos_keyless_common::input_processing::config::CircuitConfig;
 use figment::{
     providers::{Env, Format, Yaml},
     Figment,
@@ -30,7 +30,8 @@ pub struct ProverServiceState {
     pub tw_keypair_default: TrainingWheelsKeyPair,
     pub tw_keypair_new: Option<TrainingWheelsKeyPair>,
     pub config: ProverServiceConfig,
-    pub circuit_config: CircuitPaddingConfig,
+    pub circuit_config: CircuitConfig,
+    pub circuit_config_new: Option<CircuitConfig>,
     // Ensures that only one circuit is being proven at a time
 }
 
@@ -46,6 +47,8 @@ impl ProverServiceState {
             .extract()
             .expect("Couldn't load config");
 
+        println!("config.resources_dir={}", config.resources_dir);
+
         let ProverServiceSecrets {
             private_key_0: private_key,
             private_key_1: private_key_new,
@@ -57,11 +60,7 @@ impl ProverServiceState {
         let tw_keypair_default = TrainingWheelsKeyPair::from_sk(private_key);
         let tw_keypair_new = private_key_new.map(TrainingWheelsKeyPair::from_sk);
 
-        let circuit_config: CircuitPaddingConfig = serde_yaml::from_str(
-            &fs::read_to_string("conversion_config.yml")
-                .expect("Unable to read circuit config file"),
-        )
-        .expect("Couldn't parse circuit config file");
+        let circuit_config = config.load_circuit_config(false);
 
         println!("using resources dir {}", config.resources_dir);
 
@@ -69,16 +68,17 @@ impl ProverServiceState {
         let full_prover_default = FullProver::new(&config.zkey_path(false))
             .expect("failed to initialize rapidsnark prover with old zkey");
 
-        let (full_prover_new, new_vk) = if config.new_setup_dir.is_some() {
+        let (full_prover_new, new_vk, circuit_config_new) = if config.new_setup_dir.is_some() {
             let full_prover = FullProver::new(&config.zkey_path(true))
                 .expect("failed to initialize rapidsnark prover with new zkey");
             let vk_json = fs::read_to_string(config.verification_key_path(true).as_str()).unwrap();
             let local_vk: SnarkJsGroth16VerificationKey =
                 serde_json::from_str(vk_json.as_str()).unwrap();
             let onchain_vk = local_vk.try_as_onchain_repr().unwrap();
-            (Some(full_prover), Some(onchain_vk))
+            let circuit_config = config.load_circuit_config(true);
+            (Some(full_prover), Some(onchain_vk), Some(circuit_config))
         } else {
-            (None, None)
+            (None, None, None)
         };
 
         ProverServiceState {
@@ -89,6 +89,15 @@ impl ProverServiceState {
             tw_keypair_new,
             config,
             circuit_config,
+            circuit_config_new,
+        }
+    }
+
+    pub fn circuit_config(&self, use_new_setup: bool) -> &CircuitConfig {
+        if use_new_setup {
+            self.circuit_config_new.as_ref().unwrap()
+        } else {
+            &self.circuit_config
         }
     }
 }

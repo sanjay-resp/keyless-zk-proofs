@@ -26,6 +26,8 @@ pub struct RequestInput {
     pub idc_aud: Option<String>,
     #[serde(default)]
     pub use_insecure_test_jwk: bool,
+    #[serde(default)]
+    pub skip_aud_checks: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

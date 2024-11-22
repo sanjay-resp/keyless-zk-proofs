@@ -3,7 +3,7 @@
 
 use crate::TestCircuitHandle;
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 use ark_bn254::Fr;
 use ark_ff::PrimeField;
@@ -91,7 +91,7 @@ fn is_whitespace_test() {
     let circuit_handle = TestCircuitHandle::new("misc/is_whitespace_test.circom").unwrap();
 
     for c in 0u8..=127u8 {
-        let config = CircuitPaddingConfig::new();
+        let config = CircuitConfig::new();
 
         let circuit_input_signals = CircuitInputSignals::new()
             .byte_input("char", c)
@@ -115,7 +115,7 @@ fn string_bodies_test() {
 
     assert_eq!(quotes_b, calc_string_bodies(s));
 
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("in", 13)
         .max_length("out", 13);
 
@@ -140,7 +140,7 @@ fn string_bodies_test_2() {
 
     assert_eq!(quotes_b, calc_string_bodies(s));
 
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("in", 13)
         .max_length("out", 13);
 
@@ -163,7 +163,7 @@ fn string_bodies_test_random() {
         let s = generate_string_bodies_input();
         let quotes = calc_string_bodies(&s);
 
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("in", 13)
             .max_length("out", 13);
 
@@ -192,7 +192,7 @@ fn string_bodies_test_prefix_quotes() {
 
         let quotes = calc_string_bodies(&s);
 
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("in", 13)
             .max_length("out", 13);
 
@@ -215,7 +215,7 @@ fn string_bodies_test_zjma() {
     let s = "\"abc\\\\\"";
     let quotes = calc_string_bodies(s);
 
-    let config = CircuitPaddingConfig::new()
+    let config = CircuitConfig::new()
         .max_length("in", 13)
         .max_length("out", 13);
 
@@ -241,7 +241,7 @@ fn calculate_total_test() {
 
         let sum: Fr = nums.iter().sum();
 
-        let config = CircuitPaddingConfig::new().max_length("nums", 10);
+        let config = CircuitConfig::new().max_length("nums", 10);
 
         let circuit_input_signals = CircuitInputSignals::new()
             .frs_input("nums", &nums)
@@ -284,7 +284,7 @@ fn assert_equal_if_true_test() {
             (nums, true)
         };
 
-        let config = CircuitPaddingConfig::new().max_length("in", 2);
+        let config = CircuitConfig::new().max_length("in", 2);
 
         let circuit_input_signals = CircuitInputSignals::new()
             .frs_input("in", &nums)
@@ -324,7 +324,7 @@ fn email_verified_check_test() {
         let expected_uid_is_email = t.3;
         let test_should_pass = t.4;
 
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("ev_name", 20)
             .max_length("ev_value", 10)
             .max_length("uid_name", 30);

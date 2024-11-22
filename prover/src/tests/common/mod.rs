@@ -16,7 +16,7 @@ use aptos_crypto::{
     encoding_type::EncodingType,
     Uniform,
 };
-use aptos_keyless_common::input_processing::{config::CircuitPaddingConfig, encoding::AsFr};
+use aptos_keyless_common::input_processing::{config::CircuitConfig, encoding::AsFr};
 use aptos_types::{
     jwks::rsa::RSA_JWK, keyless::Pepper, transaction::authenticator::EphemeralPublicKey,
 };
@@ -51,7 +51,7 @@ pub fn init_test_full_prover(use_new_setup: bool) -> FullProver {
         .expect("failed to initialize rapidsnark prover")
 }
 
-pub fn get_test_circuit_config() -> CircuitPaddingConfig {
+pub fn get_test_circuit_config() -> CircuitConfig {
     serde_yaml::from_str(&fs::read_to_string("conversion_config.yml").expect("Unable to read file"))
         .expect("should parse correctly")
 }
@@ -113,6 +113,7 @@ pub async fn convert_prove_and_verify(
     let full_prover = init_test_full_prover(false);
     let full_prover_2 = init_test_full_prover(true);
     let circuit_config = get_test_circuit_config();
+    let circuit_config_new = get_test_circuit_config();
     let jwk_keypair = gen_test_jwk_keypair();
     let (tw_sk_default, _) = gen_test_training_wheels_keypair();
     let (tw_sk_new, tw_pk_new) = gen_test_training_wheels_keypair();
@@ -147,6 +148,7 @@ pub async fn convert_prove_and_verify(
         tw_keypair_new,
         config: prover_server_config.clone(),
         circuit_config: circuit_config.clone(),
+        circuit_config_new: Some(circuit_config_new.clone()),
     };
 
     let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);

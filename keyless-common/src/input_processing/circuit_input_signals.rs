@@ -1,7 +1,7 @@
 // Copyright © Aptos Foundation
 // SPDX-License-Identifier: Apache-2.0
 
-use super::config::CircuitPaddingConfig;
+use super::config::CircuitConfig;
 use anyhow::{anyhow, bail, Result};
 use ark_bn254::Fr;
 use serde_json::Value;
@@ -141,7 +141,7 @@ impl CircuitInputSignals<Unpadded> {
         })
     }
 
-    pub fn pad(self, config: &CircuitPaddingConfig) -> Result<CircuitInputSignals<Padded>> {
+    pub fn pad(self, config: &CircuitConfig) -> Result<CircuitInputSignals<Padded>> {
         let padded_signals_vec: Result<Vec<(String, CircuitInputSignal)>> = self
             .signals
             .into_iter()

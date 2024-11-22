@@ -64,13 +64,25 @@ pub async fn prove_handler(
     let input = preprocess::decode_and_add_jwk(body, jwk_override.as_ref())
         .with_status(StatusCode::BAD_REQUEST)?;
 
-    training_wheels::check_nonce_consistency(&input, &state.circuit_config)
+    #[allow(clippy::match_like_matches_macro)]
+    let use_new_setup = match (
+        ON_CHAIN_GROTH16_VK.read().unwrap().as_ref(),
+        state.new_groth16_vk.as_ref(),
+    ) {
+        (Some(on_chain), Some(local)) if on_chain == local => true,
+        _ => false,
+    };
+    info!("use_new_setup={use_new_setup}");
+    let circuit_config = state.circuit_config(use_new_setup);
+
+    training_wheels::check_nonce_consistency(&input, circuit_config)
         .with_status(StatusCode::BAD_REQUEST)?;
+
     training_wheels::validate_jwt_payload_parsing(&input).with_status(StatusCode::BAD_REQUEST)?;
 
     // TODO seems not super clean to output public_inputs_hash here
     let (circuit_input_signals, public_inputs_hash) =
-        derive_circuit_input_signals(input, &state.circuit_config)
+        derive_circuit_input_signals(input, circuit_config)
             .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;
 
     let formatted_input_str = serde_json::to_string(&circuit_input_signals.to_json_value())
@@ -81,17 +93,6 @@ pub async fn prove_handler(
     if state.config.enable_dangerous_logging {
         fs::write("formatted_input.json", &formatted_input_str).unwrap();
     }
-
-    #[allow(clippy::match_like_matches_macro)]
-    let use_new_setup = match (
-        ON_CHAIN_GROTH16_VK.read().unwrap().as_ref(),
-        state.new_groth16_vk.as_ref(),
-    ) {
-        (Some(on_chain), Some(local)) if on_chain == local => true,
-        _ => false,
-    };
-
-    info!("use_new_setup={use_new_setup}");
 
     let witness_file = witness_gen(&state.config, use_new_setup, &formatted_input_str)
         .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;

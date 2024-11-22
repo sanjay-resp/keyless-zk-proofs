@@ -84,6 +84,9 @@ curl --location -o "$RESOURCES_DIR/setup_2024_05/generate_witness.js" https://gi
 curl --location -o "$RESOURCES_DIR/setup_2024_05/main.wasm" https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_js/main.wasm
 curl --location -o "$RESOURCES_DIR/setup_2024_05/witness_calculator.js" https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_js/witness_calculator.js
 
+# Get extra circuit config
+curl --location -o "$RESOURCES_DIR/setup_2024_05/circuit_config.yml" https://raw.githubusercontent.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/0f2ca4730147c5d4123b9c32a0cf0bd800f36b38/circuit_config.yml
+
 # TODO: replace with the next realworld setup data once it is available.
 #  Currently using the initial setup data as a placeholder. NOTE: it does not work with the current prove request scheme.
 #mkdir -p $RESOURCES_DIR/setup_2024_02
@@ -94,6 +97,7 @@ curl --location -o "$RESOURCES_DIR/setup_2024_05/witness_calculator.js" https://
 #curl --location -o "$RESOURCES_DIR/setup_2024_02/generate_witness.js" https://raw.githubusercontent.com/aptos-labs/devnet-groth16-keys/42deb24b17f6f0370a6fcf6db9e0696a5bdf767a/main_js/generate_witness.js
 #curl --location -o "$RESOURCES_DIR/setup_2024_02/main.wasm" https://github.com/aptos-labs/devnet-groth16-keys/raw/42deb24b17f6f0370a6fcf6db9e0696a5bdf767a/main_js/main.wasm
 #curl --location -o "$RESOURCES_DIR/setup_2024_02/witness_calculator.js" https://github.com/aptos-labs/devnet-groth16-keys/raw/42deb24b17f6f0370a6fcf6db9e0696a5bdf767a/main_js/witness_calculator.js
+#curl --location -o "$RESOURCES_DIR/setup_2024_02/circuit_config.yml" https://github.com/aptos-labs/devnet-groth16-keys/raw/42deb24b17f6f0370a6fcf6db9e0696a5bdf767a/circuit_config.yml
 
 chmod -R u+rwx $RESOURCES_DIR
 

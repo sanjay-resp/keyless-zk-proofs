@@ -10,7 +10,7 @@ use aptos_crypto::{
     test_utils::random_bytes,
 };
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 use ark_bn254::Fr;
 use ark_ff::Field;
@@ -63,7 +63,7 @@ component main = hash_bytes_to_field_with_len_test(__MAX_LEN__);
         let expected_output =
             pad_and_hash_bytes_with_len(msg.as_slice(), num_bytes_circuit_capacity).unwrap();
         println!("expected_output={}", expected_output);
-        let config = CircuitPaddingConfig::new().max_length("in", num_bytes_circuit_capacity);
+        let config = CircuitConfig::new().max_length("in", num_bytes_circuit_capacity);
         let circuit_input_signals = CircuitInputSignals::new()
             .bytes_input("in", msg.as_slice())
             .usize_input("len", msg.len())
@@ -120,7 +120,7 @@ component main = HashBytesToFieldTest(__MAX_LEN__);
         let expected_output =
             pad_and_hash_bytes_no_len(msg.as_slice(), num_bytes_circuit_capacity).unwrap();
         println!("expected_output={}", expected_output);
-        let config = CircuitPaddingConfig::new().max_length("in", num_bytes_circuit_capacity);
+        let config = CircuitConfig::new().max_length("in", num_bytes_circuit_capacity);
         let circuit_input_signals = CircuitInputSignals::new()
             .bytes_input("in", msg.as_slice())
             .fr_input("expected_output", expected_output)
@@ -179,7 +179,7 @@ component main = Hash64BitLimbsToFieldWithLenTest(__MAX_LEN__);
         let expected_output =
             pad_and_hash_limbs_with_len(limbs.as_slice(), num_limbs_circuit_capacity).unwrap();
         println!("expected_output={}", expected_output);
-        let config = CircuitPaddingConfig::new().max_length("in", num_limbs_circuit_capacity);
+        let config = CircuitConfig::new().max_length("in", num_limbs_circuit_capacity);
         let circuit_input_signals = CircuitInputSignals::new()
             .limbs_input("in", limbs.as_slice())
             .usize_input("len", limbs.len())
@@ -208,7 +208,7 @@ component main = CheckAre64BitLimbs(__NUM_LIMBS__);
             circuit_src_template.replace("__NUM_LIMBS__", num_limbs.to_string().as_str());
         let circuit = TestCircuitHandle::new_from_str(circuit_src.as_str()).unwrap();
         let limbs: Vec<u64> = (0..num_limbs).map(|_| rng.gen()).collect();
-        let config = CircuitPaddingConfig::new().max_length("in", num_limbs);
+        let config = CircuitConfig::new().max_length("in", num_limbs);
         let circuit_input_signals = CircuitInputSignals::new()
             .limbs_input("in", limbs.as_slice())
             .pad(&config)
@@ -233,7 +233,7 @@ component main = CheckAre64BitLimbs(__NUM_LIMBS__);
         let circuit = TestCircuitHandle::new_from_str(circuit_src.as_str()).unwrap();
         let invalid_limb_value = Fr::from(u64::MAX) + Fr::ONE;
         let frs = vec![invalid_limb_value; num_limbs];
-        let config = CircuitPaddingConfig::new().max_length("in", num_limbs);
+        let config = CircuitConfig::new().max_length("in", num_limbs);
         let circuit_input_signals = CircuitInputSignals::new()
             .frs_input("in", frs.as_slice())
             .pad(&config)
