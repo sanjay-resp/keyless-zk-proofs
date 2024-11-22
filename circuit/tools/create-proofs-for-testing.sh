@@ -58,20 +58,20 @@ proofgen() {
             echo
             echo "Using current repo in $repodir"
             keylessrepo=$repodir
+            pushd $keylessrepo
         else
             keylessrepo=aptos-keyless-circuit-$(echo $branch | tr / -)
             echo
             echo "Cloning or updating aptos-keyless-circuit:$branch in $keylessrepo..."
             if [ -d $keylessrepo ]; then 
                 echo "Looks like repo is cloned. Updating..."
-                pushd $keylessrepo; git checkout $branch; popd
+                pushd $keylessrepo; git checkout $branch; pushd circuit
             else
                 echo "Cloning..."
-                git clone git@github.com:aptos-labs/aptos-keyless-circuit $keylessrepo
-                pushd $keylessrepo; git checkout $branch; popd
+                git clone git@github.com:aptos-labs/keyless-zk-proofs $keylessrepo
+                pushd $keylessrepo; git checkout $branch; pushd circuit
             fi
         fi
-        pushd $keylessrepo 
         {
             echo
             echo "Creating python3 virtual env w/ deps..."
