@@ -85,7 +85,7 @@ curl --location -o "$RESOURCES_DIR/setup_2024_05/main.wasm" https://github.com/a
 curl --location -o "$RESOURCES_DIR/setup_2024_05/witness_calculator.js" https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_js/witness_calculator.js
 
 # Get extra circuit config
-curl --location -o "$RESOURCES_DIR/setup_2024_05/circuit_config.yml" https://github.com/aptos-labs/devnet-groth16-keys/raw/master/circuit_config.yml
+curl --location -o "$RESOURCES_DIR/setup_2024_05/circuit_config.yml" https://raw.githubusercontent.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/0f2ca4730147c5d4123b9c32a0cf0bd800f36b38/circuit_config.yml
 
 # TODO: replace with the next realworld setup data once it is available.
 #  Currently using the initial setup data as a placeholder. NOTE: it does not work with the current prove request scheme.
