@@ -30,12 +30,12 @@ RUN mkdir -p /resources/setup_2024_05 \
     && curl --location -o /resources/setup_2024_05/prover_key.zkey https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/contributions/main_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f_final.zkey \
     && curl --location -o /resources/setup_2024_05/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c \
     && curl --location -o /resources/setup_2024_05/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat \
-    && curl --location -o /resources/setup_2024_05/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.vkey \
+    && curl --location -o /resources/setup_2024_05/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.json \
 #    && mkdir -p /resources/setup_2024_02 \
 #    && curl --location -o /resources/setup_2024_02/prover_key.zkey https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/contributions/main_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f_final.zkey \
 #    && curl --location -o /resources/setup_2024_02/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c \
 #    && curl --location -o /resources/setup_2024_02/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat \
-#    && curl --location -o /resources/setup_2024_02/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.vkey \
+#    && curl --location -o /resources/setup_2024_02/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.json \
     && echo "Resources ready."
 
 RUN chmod u+x /resources/setup_2024_05/main_c
