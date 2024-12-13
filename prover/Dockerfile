@@ -30,13 +30,13 @@ RUN mkdir -p /resources/setup_2024_05 \
     && curl --location -o /resources/setup_2024_05/prover_key.zkey https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/contributions/main_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f_final.zkey \
     && curl --location -o /resources/setup_2024_05/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c \
     && curl --location -o /resources/setup_2024_05/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat \
-    && curl --location -o /resources/setup_2024_05/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.vkey \
+    && curl --location -o /resources/setup_2024_05/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.json \
     && curl --location -o /resources/setup_2024_05/circuit_config.yml https://raw.githubusercontent.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/0f2ca4730147c5d4123b9c32a0cf0bd800f36b38/circuit_config.yml \
     #    && mkdir -p /resources/setup_2024_02 \
 #    && curl --location -o /resources/setup_2024_02/prover_key.zkey https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/contributions/main_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f_final.zkey \
 #    && curl --location -o /resources/setup_2024_02/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c \
 #    && curl --location -o /resources/setup_2024_02/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat \
-#    && curl --location -o /resources/setup_2024_02/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.vkey \
+#    && curl --location -o /resources/setup_2024_02/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.json \
 #    && curl --location -o /resources/setup_2024_02/circuit_config.yml https://github.com/aptos-labs/devnet-groth16-keys/raw/master/circuit_config.yml \
     && echo "Resources ready."
 
