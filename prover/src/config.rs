@@ -1,5 +1,6 @@
 // Copyright © Aptos Foundation
 
+use aptos_keyless_common::input_processing::config::CircuitConfig;
 use serde::{Deserialize, Serialize};
 
 pub const CONFIG_FILE_PATH: &str = "config.yml";
@@ -94,6 +95,24 @@ impl ProverServiceConfig {
                 + "/main.wasm"),
         )
         .into_owned()
+    }
+
+    pub fn circuit_config_path(&self, use_new_setup: bool) -> String {
+        shellexpand::tilde(
+            &(String::from(&self.resources_dir)
+                + "/"
+                + self.setup_dir(use_new_setup)
+                + "/circuit_config.yml"),
+        )
+        .into_owned()
+    }
+
+    pub fn load_circuit_config(&self, use_new_setup: bool) -> CircuitConfig {
+        println!("load_circuit_config, use_new_setup={use_new_setup}");
+        let path = self.circuit_config_path(use_new_setup);
+        println!("load_circuit_config, path={path}");
+        let circuit_config_yaml = std::fs::read_to_string(path).unwrap();
+        serde_yaml::from_str(&circuit_config_yaml).unwrap()
     }
 }
 

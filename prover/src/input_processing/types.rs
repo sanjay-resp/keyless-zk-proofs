@@ -18,6 +18,7 @@ pub struct Input {
     pub extra_field: Option<String>,
     pub exp_horizon_secs: u64,
     pub idc_aud: Option<String>,
+    pub skip_aud_checks: bool,
 }
 
 impl Input {

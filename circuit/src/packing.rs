@@ -3,7 +3,7 @@
 
 use crate::TestCircuitHandle;
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 use ark_bn254::Fr;
 use ark_ff::{BigInteger, PrimeField};
@@ -39,7 +39,7 @@ fn num2bits_be_test() {
     let bits_max_size = 8;
 
     for n in 0..=255 {
-        let config = CircuitPaddingConfig::new().max_length("bits_out", bits_max_size);
+        let config = CircuitConfig::new().max_length("bits_out", bits_max_size);
 
         let circuit_input_signals = CircuitInputSignals::new()
             .byte_input("num_in", n)
@@ -62,7 +62,7 @@ fn bits2num_big_endian_test() {
     for i in 0..=255 {
         let expected_n = rng.next_u64();
 
-        let config = CircuitPaddingConfig::new().max_length("bits_in", bits_max_size);
+        let config = CircuitConfig::new().max_length("bits_in", bits_max_size);
 
         let circuit_input_signals = CircuitInputSignals::new()
             .bools_input("bits_in", &expected_num2bits_be(expected_n, bits_max_size))
@@ -93,7 +93,7 @@ fn bytes_to_bits_test() {
             .flat_map(|byte| expected_num2bits_be(*byte as u64, 8))
             .collect();
 
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("bytes_in", BYTES_MAX_SIZE)
             .max_length("bits_out", BITS_MAX_SIZE);
 
@@ -133,7 +133,7 @@ fn bits_to_field_elems_test() {
         let expected_field_elems = bits_to_field_elems(&bits, BITS_PER_FIELD_ELEM);
         println!("{}", expected_field_elems.len());
 
-        let config = CircuitPaddingConfig::new()
+        let config = CircuitConfig::new()
             .max_length("bits_in", MAX_BITS_LEN)
             .max_length("field_elems_out", num_field_elems);
 

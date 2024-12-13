@@ -15,7 +15,7 @@ use anyhow::Result;
 use aptos_keyless_common::{
     input_processing::{
         circuit_input_signals::{CircuitInputSignals, Padded},
-        config::CircuitPaddingConfig,
+        config::CircuitConfig,
         encoding::*,
         sha::{compute_sha_padding_without_len, jwt_bit_len_binary, with_sha_padding_bytes},
     },
@@ -26,7 +26,7 @@ use tracing::info_span;
 
 pub fn derive_circuit_input_signals(
     input: Input,
-    config: &CircuitPaddingConfig,
+    config: &CircuitConfig,
 ) -> Result<(CircuitInputSignals<Padded>, PoseidonHash), anyhow::Error> {
     // TODO add metrics instead of just printing out elapsed time
     let _start_time = Instant::now();
@@ -40,7 +40,7 @@ pub fn derive_circuit_input_signals(
     let (temp_pubkey_frs, temp_pubkey_len) = public_inputs_hash::compute_temp_pubkey_frs(&input)?;
     let public_inputs_hash = compute_public_inputs_hash(&input, config)?;
 
-    let circuit_input_signals = CircuitInputSignals::new()
+    let mut circuit_input_signals = CircuitInputSignals::new()
         // "global" inputs
         .bytes_input("jwt", &unsigned_jwt_with_padding)
         .str_input(
@@ -82,17 +82,20 @@ pub fn derive_circuit_input_signals(
         .fr_input("temp_pubkey_len", temp_pubkey_len)
         .fr_input("jwt_randomness", epk_blinder_fr)
         .fr_input("pepper", input.pepper_fr)
-        .bool_input("use_extra_field", input.use_extra_field())
+        .bool_input("use_extra_field", input.use_extra_field());
+    if config.has_input_skip_aud_checks {
+        circuit_input_signals =
+            circuit_input_signals.bool_input("skip_aud_checks", input.skip_aud_checks);
+    }
+    circuit_input_signals = circuit_input_signals
         .fr_input("public_inputs_hash", public_inputs_hash)
-        .merge(field_check_input_signals(&input)?)?
-        // add padding for global inputs
-        .pad(config)?;
+        .merge(field_check_input_signals(&input)?)?;
+
+    // add padding for global inputs
+    let padded = circuit_input_signals.pad(config)?;
     // "field check" input signals
 
-    Ok((
-        circuit_input_signals,
-        PoseidonHash::try_from_fr(&public_inputs_hash)?,
-    ))
+    Ok((padded, PoseidonHash::try_from_fr(&public_inputs_hash)?))
 }
 
 #[cfg(test)]

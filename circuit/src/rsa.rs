@@ -3,7 +3,7 @@
 
 use crate::TestCircuitHandle;
 use aptos_keyless_common::input_processing::{
-    circuit_input_signals::CircuitInputSignals, config::CircuitPaddingConfig,
+    circuit_input_signals::CircuitInputSignals, config::CircuitConfig,
 };
 use aptos_logger::info;
 use num_bigint::BigUint;
@@ -108,7 +108,7 @@ fn common<F: Fn(&mut Vec<u64>, &mut Vec<u64>, &mut Vec<u64>)>(
         );
         let mut signature_limbs = signature.to_u64_digits();
 
-        let config = CircuitPaddingConfig::new();
+        let config = CircuitConfig::new();
 
         update_signals(
             &mut signature_limbs,

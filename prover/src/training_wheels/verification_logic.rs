@@ -5,7 +5,7 @@ use std::{
 
 use aptos_crypto::poseidon_bn254;
 use aptos_keyless_common::input_processing::{
-    config::CircuitPaddingConfig,
+    config::CircuitConfig,
     encoding::{FromB64, JwtHeader, JwtParts, JwtPayload},
 };
 use aptos_types::{
@@ -23,7 +23,7 @@ use crate::{
 };
 use anyhow::{bail, Context, Result};
 
-pub fn check_nonce_consistency(input: &Input, circuit_config: &CircuitPaddingConfig) -> Result<()> {
+pub fn check_nonce_consistency(input: &Input, circuit_config: &CircuitConfig) -> Result<()> {
     let payload_decoded = input.jwt_parts.payload_decoded()?;
     let payload_struct: JwtPayload = serde_json::from_str(&payload_decoded)?;
     let computed_nonce = compute_nonce(
@@ -118,7 +118,7 @@ pub fn compute_nonce(
     exp_date: u64,
     epk: &EphemeralPublicKey,
     epk_blinder: Fr,
-    config: &CircuitPaddingConfig,
+    config: &CircuitConfig,
 ) -> Result<Fr> {
     let mut frs = poseidon_bn254::keyless::pad_and_pack_bytes_to_scalars_with_len(
         epk.to_bytes().as_slice(),
