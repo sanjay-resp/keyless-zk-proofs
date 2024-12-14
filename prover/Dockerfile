@@ -26,23 +26,9 @@ COPY --link --from=build_prover_service ./prover/rust-rapidsnark/rapidsnark/pack
 ARG TRUSTLESS_REPO_GIT_SHA=ae684b376059c791ded97d89c3ca114edc1cb44c
 ARG GROTH16_KEYS_REPO_GIT_SHA=6625c811aed782067875cf7998c143f8db17324e
 
-RUN mkdir -p /resources/setup_2024_05 \
-    && curl --location -o /resources/setup_2024_05/prover_key.zkey https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/contributions/main_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f_final.zkey \
-    && curl --location -o /resources/setup_2024_05/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c \
-    && curl --location -o /resources/setup_2024_05/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat \
-    && curl --location -o /resources/setup_2024_05/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.json \
-    && curl --location -o /resources/setup_2024_05/circuit_config.yml https://raw.githubusercontent.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/0f2ca4730147c5d4123b9c32a0cf0bd800f36b38/circuit_config.yml \
-    #    && mkdir -p /resources/setup_2024_02 \
-#    && curl --location -o /resources/setup_2024_02/prover_key.zkey https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/contributions/main_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f_final.zkey \
-#    && curl --location -o /resources/setup_2024_02/main_c https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c \
-#    && curl --location -o /resources/setup_2024_02/main_c.dat https://github.com/aptos-labs/devnet-groth16-keys/raw/master/main_c_cpp/main_c.dat \
-#    && curl --location -o /resources/setup_2024_02/verification_key.json https://github.com/aptos-labs/aptos-keyless-trusted-setup-contributions-may-2024/raw/main/verification_key_39f9c44b4342ed5e6941fae36cf6c87c52b1e17f.json \
-#    && curl --location -o /resources/setup_2024_02/circuit_config.yml https://github.com/aptos-labs/devnet-groth16-keys/raw/master/circuit_config.yml \
-    && echo "Resources ready."
-
-RUN chmod u+x /resources/setup_2024_05/main_c
-#RUN chmod u+x /resources/setup_2024_02/main_c
-
+COPY scripts scripts
+ENV RESOURCES_DIR=/resources
+RUN python3 scripts/prepare_setups.py
 
 COPY --link ./prover/config.yml ./config.yml
 

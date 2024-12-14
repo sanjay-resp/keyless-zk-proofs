@@ -24,12 +24,12 @@ source ./scripts/dev_setup.sh
 The prover now works with a default training wheel key pair (already prepared at `private_key_for_testing.txt`)
 and optionally a "next" one (already prepared at `private_key_for_testing_another.txt`).
 
-The prover now works with a default circuit (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/setup_2024_05`)
+The prover now works with a default circuit (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/default`)
 and optionally a "next" one (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/setup_initial`).
 
 In terminal 0, prepare the mock on-chain data and mock a full node with a naive HTTP server.
 ```bash
-LOCAL_VK_IN=~/.local/share/aptos-prover-service/setup_2024_05/verification_key.json ONCHAIN_VK_OUT=groth16_vk.json cargo test groth16_vk_rewriter
+LOCAL_VK_IN=~/.local/share/aptos-prover-service/default/verification_key.json ONCHAIN_VK_OUT=groth16_vk.json cargo test groth16_vk_rewriter
 LOCAL_TW_VK_IN=private_key_for_testing.txt ONCHAIN_KEYLESS_CONFIG_OUT=keyless_config.json cargo test tw_vk_rewriter
 python3 -m http.server 4444
 ```
