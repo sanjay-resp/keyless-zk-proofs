@@ -5,7 +5,7 @@ ARG TARGETARCH
 
 
 RUN apt-get update \
-    && apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev python3 python3-pip
+    && apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev
 
 COPY --link . .
 
@@ -16,7 +16,7 @@ RUN cargo build --release -p prover-service && \
 FROM debian:12.4
 
 RUN apt-get update \
-    && apt-get install -y libgmp-dev libsodium-dev libomp-dev curl 
+    && apt-get install -y libgmp-dev libsodium-dev libomp-dev curl python3 python3-pip
 
 # copy prover server
 COPY --link --from=build_prover_service ./prover-service-bin ./prover-service-bin
