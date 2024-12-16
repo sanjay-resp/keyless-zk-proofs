@@ -5,7 +5,7 @@ ARG TARGETARCH
 
 
 RUN apt-get update \
-    && apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev
+    && apt-get install -y gcc clang cmake make libyaml-dev nasm libgmp-dev libomp-dev python3 python3-pip
 
 COPY --link . .
 
