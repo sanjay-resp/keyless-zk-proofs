@@ -24,18 +24,24 @@ source ./scripts/dev_setup.sh
 The prover now works with a default training wheel key pair (already prepared at `private_key_for_testing.txt`)
 and optionally a "next" one (already prepared at `private_key_for_testing_another.txt`).
 
-The prover now works with a default circuit (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/setup_2024_05`)
+The prover now works with a default circuit (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/default`)
 and optionally a "next" one (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/setup_initial`).
 
 In terminal 0, prepare the mock on-chain data and mock a full node with a naive HTTP server.
 ```bash
-LOCAL_VK_IN=~/.local/share/aptos-prover-service/setup_2024_05/verification_key.json ONCHAIN_VK_OUT=groth16_vk.json cargo test groth16_vk_rewriter
+export DYLD_LIBRARY_PATH=$(pwd)/prover/rust-rapidsnark/rapidsnark/package/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$(pwd)/prover/rust-rapidsnark/rapidsnark/package/lib:$LD_LIBRARY_PATH
+cd prover
+LOCAL_VK_IN=~/.local/share/aptos-prover-service/default/verification_key.json ONCHAIN_VK_OUT=groth16_vk.json cargo test groth16_vk_rewriter
 LOCAL_TW_VK_IN=private_key_for_testing.txt ONCHAIN_KEYLESS_CONFIG_OUT=keyless_config.json cargo test tw_vk_rewriter
 python3 -m http.server 4444
 ```
 
 In terminal 1, run the prover.
 ```bash
+export DYLD_LIBRARY_PATH=$(pwd)/prover/rust-rapidsnark/rapidsnark/package/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$(pwd)/prover/rust-rapidsnark/rapidsnark/package/lib:$LD_LIBRARY_PATH
+cd prover
 export ONCHAIN_GROTH16_VK_URL=http://localhost:4444/groth16_vk.json
 export ONCHAIN_TW_VK_URL=http://localhost:4444/keyless_config.json
 export PRIVATE_KEY_0=$(cat ./private_key_for_testing.txt) 
@@ -54,6 +60,9 @@ Save the payload as `prover_request_payload.json`.
 
 In terminal 2, make a request to the prover and expect it to finish normally.
 ```bash
+export DYLD_LIBRARY_PATH=$(pwd)/prover/rust-rapidsnark/rapidsnark/package/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$(pwd)/prover/rust-rapidsnark/rapidsnark/package/lib:$LD_LIBRARY_PATH
+cd prover
 ./scripts/make_request.sh http://localhost:8083 prover_request_payload.json
 ```
 You should also see logs `use_new_setup=false` and `use_new_tw_keys=false` in terminal 1,
@@ -61,6 +70,7 @@ indicating the rotation has not happened yet.
 
 
 If you rotate the training wheel keys and retry the request as follows,
+(still in terminal 2, run:)
 ```bash
 LOCAL_TW_VK_IN=private_key_for_testing_another.txt ONCHAIN_KEYLESS_CONFIG_OUT=keyless_config.json cargo test tw_vk_rewriter
 ./scripts/make_request.sh http://localhost:8083 prover_request_payload.json
@@ -69,7 +79,7 @@ you should see logs become `use_new_setup=false` and `use_new_tw_keys=true` in t
 
 In a situation where a Groth16 key rotation has happened:
 ```bash
-# go back to terminal 1 and ctrl+c to kill the currently running prover.
+# go back to terminal 1 and ctrl+c to kill the currently running prover, then run:
 export CONFIG_FILE="config_local_testing_new_setup_specified.yml"
 cargo run
 ```

@@ -41,7 +41,31 @@ install_circom() {
 
 install_pip3_deps() {
     echo "pip3 deps installation started."
-    sudo apt install python3-venv -y
+    OS=$(uname -s)
+    case $OS in
+      Linux*)
+        if command -v apt-get > /dev/null; then
+          sudo apt-get update
+          sudo apt-get install -y python3-venv
+        elif command -v dnf > /dev/null; then
+          sudo dnf install -y python3-venv
+        elif command -v yum > /dev/null; then
+          sudo yum install -y python3-venv
+        else
+          echo "No suitable package manager found for Linux."
+        fi
+        ;;
+      Darwin*)
+        if command -v brew > /dev/null; then
+          brew install python
+        else
+          echo "Homebrew is not installed. Install Homebrew to use this."
+        fi
+        ;;
+      *)
+        echo "Unsupported OS: $OS"
+        ;;
+    esac
     echo "pip3 deps installation finished."
 }
 
