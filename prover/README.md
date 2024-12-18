@@ -25,7 +25,7 @@ The prover now works with a default training wheel key pair (already prepared at
 and optionally a "next" one (already prepared at `private_key_for_testing_another.txt`).
 
 The prover now works with a default circuit (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/default`)
-and optionally a "next" one (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/setup_initial`).
+and optionally a "next" one (prepared by `dev_setup` at `~/.local/share/aptos-prover-service/new`).
 
 In terminal 0, prepare the mock on-chain data and mock a full node with a naive HTTP server.
 ```bash
