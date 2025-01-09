@@ -29,4 +29,4 @@ utils.prepare_single_setup(
 )
 
 utils.force_symlink_dir(f'{res_root}/setup_2024_05', f'{res_root}/default')
-utils.force_symlink_dir(f'{res_root}/setup_2024_05', f'{res_root}/new')
+utils.force_symlink_dir(f'{res_root}/setup_2025_01', f'{res_root}/new')

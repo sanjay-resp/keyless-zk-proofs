@@ -46,7 +46,7 @@ export ONCHAIN_GROTH16_VK_URL=http://localhost:4444/groth16_vk.json
 export ONCHAIN_TW_VK_URL=http://localhost:4444/keyless_config.json
 export PRIVATE_KEY_0=$(cat ./private_key_for_testing.txt) 
 export PRIVATE_KEY_1=$(cat ./private_key_for_testing_another.txt)
-export CONFIG_FILE="config_local_testing_new_setup_unspecified.yml" 
+export CONFIG_FILE="config_local_testing_new_setup_specified.yml" 
 cargo run
 ```
 
@@ -77,14 +77,11 @@ LOCAL_TW_VK_IN=private_key_for_testing_another.txt ONCHAIN_KEYLESS_CONFIG_OUT=ke
 ```
 you should see logs become `use_new_setup=false` and `use_new_tw_keys=true` in terminal 1.
 
-In a situation where a Groth16 key rotation has happened:
+If you rotate the Groth16 VK and retry the request as follows,
+(still in terminal 2, run:)
 ```bash
 # go back to terminal 1 and ctrl+c to kill the currently running prover, then run:
-export CONFIG_FILE="config_local_testing_new_setup_specified.yml"
-cargo run
-```
-and in terminal 2 retry the request:
-```bash
+LOCAL_VK_IN=~/.local/share/aptos-prover-service/new/verification_key.json ONCHAIN_VK_OUT=groth16_vk.json cargo test groth16_vk_rewriter
 ./scripts/make_request.sh http://localhost:8083 prover_request_payload.json
 ```
 you should see the logs become `use_new_setup=true` and `use_new_tw_keys=true` in terminal 1.
