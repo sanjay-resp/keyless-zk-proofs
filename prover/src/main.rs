@@ -106,11 +106,11 @@ async fn main() {
             post(handlers::prove_handler).fallback(handlers::fallback_handler),
         )
         .route(
-            "cached/groth16-vk",
+            "/cached/groth16-vk",
             get(handlers::cached_groth16_vk_handler),
         )
         .route(
-            "cached/keyless-config",
+            "/cached/keyless-config",
             get(handlers::cached_keyless_config),
         )
         .route("/healthcheck", get(handlers::healthcheck_handler))
