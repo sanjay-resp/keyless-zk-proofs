@@ -3,7 +3,7 @@
 use axum::{
     http::header,
     routing::{get, post},
-    Router,
+    Json, Router,
 };
 use http::{Method, StatusCode};
 use log::info;
@@ -16,6 +16,7 @@ use axum_prometheus::{
     utils::SECONDS_DURATION_BUCKETS,
     PrometheusMetricLayerBuilder, AXUM_HTTP_REQUESTS_DURATION_SECONDS,
 };
+use prover_service::config::CONFIG;
 use prover_service::groth16_vk::ON_CHAIN_GROTH16_VK;
 use prover_service::prover_key::ON_CHAIN_KEYLESS_CONFIG;
 use prover_service::watcher::start_external_resource_refresh_loop;
@@ -36,9 +37,8 @@ async fn main() {
 
     // init tracing
     logging::init_tracing().expect("Couldn't init tracing.");
-
+    info!("CONFIG={:?}", CONFIG);
     let state = ProverServiceState::init();
-    let config = state.config.clone();
     let state = Arc::new(state);
 
     let vkey = fs::read_to_string(state.config.verification_key_path(false))
@@ -79,8 +79,8 @@ async fn main() {
 
     // init jwk fetching job; refresh every `config.jwk_refresh_rate_secs` seconds
     jwk_fetching::init_jwk_fetching(
-        &config.oidc_providers,
-        Duration::from_secs(config.jwk_refresh_rate_secs),
+        &CONFIG.oidc_providers,
+        Duration::from_secs(CONFIG.jwk_refresh_rate_secs),
     )
     .await;
 
@@ -101,6 +101,7 @@ async fn main() {
 
     // init axum and serve public routes
     let app = Router::new()
+        .route("/meta", get((StatusCode::OK, Json(CONFIG.clone()))))
         .route(
             "/v0/prove",
             post(handlers::prove_handler).fallback(handlers::fallback_handler),
@@ -119,7 +120,7 @@ async fn main() {
         .layer(ServiceBuilder::new().layer(cors))
         .layer(prometheus_layer);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], CONFIG.port));
     let app_handle = tokio::spawn(async move {
         let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
         axum::serve(listener, app).await.unwrap();
@@ -154,7 +155,7 @@ async fn main() {
         )
         .fallback(handlers::fallback_handler);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], config.metrics_port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], CONFIG.metrics_port));
     let metrics_handle = tokio::spawn(async move {
         let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
         axum::serve(listener, app_metrics).await.unwrap();
