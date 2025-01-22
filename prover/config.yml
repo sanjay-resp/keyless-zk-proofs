@@ -17,3 +17,5 @@ metrics_port: 9100
 enable_dangerous_logging: false
 enable_debug_checks: false
 enable_federated_jwks: false
+disable_valid_jwt_exp_claim_check: false
+disable_iat_in_past_check: false
