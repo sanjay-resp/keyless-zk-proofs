@@ -38,7 +38,7 @@ pub struct ProverServiceConfig {
     #[serde(default)]
     pub disable_iat_in_past_check: bool,
     #[serde(default)]
-    pub disable_valid_jwt_exp_claim_check: bool,
+    pub disable_exp_claim_in_future_check: bool,
     #[serde(default)]
     pub use_insecure_jwk_for_test: bool,
 }

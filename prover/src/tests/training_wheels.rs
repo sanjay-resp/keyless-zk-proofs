@@ -71,7 +71,7 @@ fn test_validate_jwt_sig_and_dates_expired_can_be_disabled() {
     let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);
 
     let mut config = CONFIG.clone();
-    config.disable_valid_jwt_exp_claim_check = true;
+    config.disable_exp_claim_in_future_check = true;
 
     assert!(validate_jwt_sig_and_dates(
         &prover_request_input,

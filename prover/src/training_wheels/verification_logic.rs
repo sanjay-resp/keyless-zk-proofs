@@ -65,7 +65,7 @@ pub fn validate_jwt_sig_and_dates(
 
     // Check the signature verifies.
     let mut validation = Validation::new(Algorithm::RS256);
-    if config.disable_valid_jwt_exp_claim_check {
+    if config.disable_exp_claim_in_future_check {
         validation.validate_exp = false;
     }
     let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e)?;
