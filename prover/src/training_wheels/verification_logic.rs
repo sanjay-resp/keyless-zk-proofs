@@ -65,7 +65,7 @@ pub fn validate_jwt_sig_and_dates(
 
     // Check the signature verifies.
     let mut validation = Validation::new(Algorithm::RS256);
-    if config.disable_exp_claim_in_future_check {
+    if !config.enable_jwt_exp_not_in_the_past_check {
         validation.validate_exp = false;
     }
     let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e)?;
@@ -79,7 +79,7 @@ pub fn validate_jwt_sig_and_dates(
         .context("Went back in time")
         .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    if !config.disable_iat_in_past_check && payload_struct.iat > since_the_epoch.as_secs() {
+    if config.enable_jwt_iat_not_in_future_check && payload_struct.iat > since_the_epoch.as_secs() {
         crate::bail!("Submitted a request jwt which was issued in the future")
     } else {
         Ok(())

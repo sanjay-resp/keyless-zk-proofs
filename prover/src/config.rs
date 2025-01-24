@@ -12,6 +12,10 @@ pub const CONFIG_FILE_PATH: &str = "config.yml";
 pub const LOCAL_TESTING_CONFIG_FILE_PATH: &str = "config_local_testing.yml";
 pub const CONFIG_FILE_PATH_ENVVAR: &str = "CONFIG_FILE";
 
+fn default_true() -> bool {
+    true
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 //#[serde(deny_unknown_fields)]
 pub struct ProverServiceConfig {
@@ -35,10 +39,10 @@ pub struct ProverServiceConfig {
     pub enable_test_provider: bool,
     #[serde(default)]
     pub enable_federated_jwks: bool,
-    #[serde(default)]
-    pub disable_iat_in_past_check: bool,
-    #[serde(default)]
-    pub disable_exp_claim_in_future_check: bool,
+    #[serde(default = "default_true")]
+    pub enable_jwt_iat_not_in_future_check: bool,
+    #[serde(default = "default_true")]
+    pub enable_jwt_exp_not_in_the_past_check: bool,
     #[serde(default)]
     pub use_insecure_jwk_for_test: bool,
 }

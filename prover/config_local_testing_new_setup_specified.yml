@@ -19,4 +19,4 @@ enable_dangerous_logging: true
 enable_debug_checks: true
 enable_test_provider: true
 enable_federated_jwks: true
-disable_iat_in_past_check: false
+enable_jwt_iat_not_in_future_check: true

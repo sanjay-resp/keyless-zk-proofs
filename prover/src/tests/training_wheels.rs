@@ -71,7 +71,7 @@ fn test_validate_jwt_sig_and_dates_expired_can_be_disabled() {
     let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);
 
     let mut config = CONFIG.clone();
-    config.disable_exp_claim_in_future_check = true;
+    config.enable_jwt_exp_not_in_the_past_check = false;
 
     assert!(validate_jwt_sig_and_dates(
         &prover_request_input,
@@ -129,8 +129,8 @@ fn test_validate_jwt_sig_and_dates_future_iat_can_be_disabled() {
     let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);
 
     let mut config = CONFIG.clone();
-    config.disable_iat_in_past_check = true;
     // Disable the future iat check.
+    config.enable_jwt_iat_not_in_future_check = false;
     assert!(validate_jwt_sig_and_dates(
         &prover_request_input,
         Some(&jwk_keypair.into_rsa_jwk()),
