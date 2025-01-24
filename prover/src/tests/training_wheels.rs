@@ -5,12 +5,7 @@ use crate::tests::common::types::{ProofTestCase, TestJWTPayload};
 use crate::tests::common::{gen_test_jwk_keypair, get_test_circuit_config, types::TestJWKKeyPair};
 use crate::training_wheels::validate_jwt_sig_and_dates;
 
-#[test]
-fn test_validate_jwt_sig_and_dates() {
-    let jwt_payload = TestJWTPayload {
-        ..TestJWTPayload::default()
-    };
-
+fn test_jwt_validation(jwt_payload: TestJWTPayload, config: &ProverServiceConfig) {
     let testcase =
         ProofTestCase::default_with_payload(jwt_payload).compute_nonce(&get_test_circuit_config());
 
@@ -20,9 +15,17 @@ fn test_validate_jwt_sig_and_dates() {
     assert!(validate_jwt_sig_and_dates(
         &prover_request_input,
         Some(&jwk_keypair.into_rsa_jwk()),
-        &CONFIG,
+        &config,
     )
     .is_ok());
+}
+
+#[test]
+fn test_validate_jwt_sig_and_dates() {
+    let jwt_payload = TestJWTPayload {
+        ..TestJWTPayload::default()
+    };
+    test_jwt_validation(jwt_payload, &CONFIG);
 }
 
 #[test]
@@ -37,19 +40,7 @@ fn test_validate_jwt_sig_and_dates_expired() {
         exp: since_the_epoch.as_secs() - 100,
         ..TestJWTPayload::default()
     };
-
-    let testcase =
-        ProofTestCase::default_with_payload(jwt_payload).compute_nonce(&get_test_circuit_config());
-
-    let jwk_keypair = gen_test_jwk_keypair();
-    let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);
-
-    assert!(validate_jwt_sig_and_dates(
-        &prover_request_input,
-        Some(&jwk_keypair.into_rsa_jwk()),
-        &CONFIG,
-    )
-    .is_ok());
+    test_jwt_validation(jwt_payload, &CONFIG);
 }
 
 #[test]
@@ -64,21 +55,9 @@ fn test_validate_jwt_sig_and_dates_expired_can_be_disabled() {
         ..TestJWTPayload::default()
     };
 
-    let testcase =
-        ProofTestCase::default_with_payload(jwt_payload).compute_nonce(&get_test_circuit_config());
-
-    let jwk_keypair = gen_test_jwk_keypair();
-    let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);
-
     let mut config = CONFIG.clone();
     config.enable_jwt_exp_not_in_the_past_check = false;
-
-    assert!(validate_jwt_sig_and_dates(
-        &prover_request_input,
-        Some(&jwk_keypair.into_rsa_jwk()),
-        &config,
-    )
-    .is_ok());
+    test_jwt_validation(jwt_payload, &config);
 }
 
 #[test]
@@ -94,19 +73,7 @@ fn test_validate_jwt_sig_and_dates_future_iat() {
         iat: since_the_epoch.as_secs() + 100,
         ..TestJWTPayload::default()
     };
-
-    let testcase =
-        ProofTestCase::default_with_payload(jwt_payload).compute_nonce(&get_test_circuit_config());
-
-    let jwk_keypair = gen_test_jwk_keypair();
-    let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);
-
-    assert!(validate_jwt_sig_and_dates(
-        &prover_request_input,
-        Some(&jwk_keypair.into_rsa_jwk()),
-        &CONFIG,
-    )
-    .is_ok());
+    test_jwt_validation(jwt_payload, &CONFIG);
 }
 
 #[test]
@@ -122,19 +89,7 @@ fn test_validate_jwt_sig_and_dates_future_iat_can_be_disabled() {
         ..TestJWTPayload::default()
     };
 
-    let testcase =
-        ProofTestCase::default_with_payload(jwt_payload).compute_nonce(&get_test_circuit_config());
-
-    let jwk_keypair = gen_test_jwk_keypair();
-    let prover_request_input = testcase.convert_to_prover_request(&jwk_keypair);
-
     let mut config = CONFIG.clone();
-    // Disable the future iat check.
     config.enable_jwt_iat_not_in_future_check = false;
-    assert!(validate_jwt_sig_and_dates(
-        &prover_request_input,
-        Some(&jwk_keypair.into_rsa_jwk()),
-        &config
-    )
-    .is_ok());
+    test_jwt_validation(jwt_payload, &config);
 }
