@@ -17,6 +17,7 @@ use jsonwebtoken::{Algorithm, DecodingKey, Validation};
 
 use crate::{
     api::RequestInput,
+    config::ProverServiceConfig,
     error::{ErrorWithCode, ThrowCodeOnError},
     input_processing::{field_parser::FieldParser, types::Input},
     jwk_fetching,
@@ -43,7 +44,7 @@ pub fn check_nonce_consistency(input: &Input, circuit_config: &CircuitConfig) ->
 pub fn validate_jwt_sig_and_dates(
     rqi: &RequestInput,
     maybe_jwk: Option<&RSA_JWK>,
-    disable_iat_in_past_check: bool,
+    config: &ProverServiceConfig,
 ) -> Result<(), ErrorWithCode> {
     let jwt_parts = JwtParts::from_b64(&rqi.jwt_b64)?;
 
@@ -64,7 +65,9 @@ pub fn validate_jwt_sig_and_dates(
 
     // Check the signature verifies.
     let mut validation = Validation::new(Algorithm::RS256);
-    validation.validate_exp = false;
+    if !config.enable_jwt_exp_not_in_the_past_check {
+        validation.validate_exp = false;
+    }
     let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e)?;
 
     let _claims = jsonwebtoken::decode::<Claims>(&rqi.jwt_b64, key, &validation)?;
@@ -76,7 +79,7 @@ pub fn validate_jwt_sig_and_dates(
         .context("Went back in time")
         .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    if !disable_iat_in_past_check && payload_struct.iat > since_the_epoch.as_secs() {
+    if config.enable_jwt_iat_not_in_future_check && payload_struct.iat > since_the_epoch.as_secs() {
         crate::bail!("Submitted a request jwt which was issued in the future")
     } else {
         Ok(())

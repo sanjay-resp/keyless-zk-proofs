@@ -55,12 +55,8 @@ pub async fn prove_handler(
         jwk_override = get_jwk(&body.jwt_b64, "https://github.com/aptos-labs/aptos-core/raw/main/types/src/jwks/rsa/insecure_test_jwk.json").await.ok().map(|arc| (*arc).clone());
     }
 
-    training_wheels::validate_jwt_sig_and_dates(
-        &body,
-        jwk_override.as_ref(),
-        state.config.disable_iat_in_past_check,
-    )
-    .with_status(StatusCode::BAD_REQUEST)?;
+    training_wheels::validate_jwt_sig_and_dates(&body, jwk_override.as_ref(), &state.config)
+        .with_status(StatusCode::BAD_REQUEST)?;
 
     let input = preprocess::decode_and_add_jwk(body, jwk_override.as_ref())
         .with_status(StatusCode::BAD_REQUEST)?;
