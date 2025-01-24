@@ -16,7 +16,7 @@ fn test_jwt_validation(jwt_payload: TestJWTPayload, config: &ProverServiceConfig
     assert!(validate_jwt_sig_and_dates(
         &prover_request_input,
         Some(&jwk_keypair.into_rsa_jwk()),
-        &config,
+        config,
     )
     .is_ok());
 }
