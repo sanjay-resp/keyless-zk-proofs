@@ -1,8 +1,8 @@
 pragma circom 2.1.3;
 
-include "circomlib/circuits/sha256/constants.circom";
-include "circomlib/circuits/sha256/sha256compression.circom";
-include "circomlib/circuits/comparators.circom";
+include "../../circomlib/circuits/sha256/constants.circom";
+include "../../circomlib/circuits/sha256/sha256compression.circom";
+include "../../circomlib/circuits/comparators.circom";
 include "./misc.circom";
 
 // Similar to `sha256_unsafe` in https://github.com/TheFrozenFire/snark-jwt-verify/blob/master/circuits/sha256.circom

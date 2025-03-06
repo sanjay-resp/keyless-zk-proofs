@@ -4,8 +4,8 @@ include "./misc.circom";
 include "./arrays.circom";
 include "./hashtofield.circom";
 include "./packing.circom";
-include "circomlib/circuits/gates.circom";
-include "circomlib/circuits/bitify.circom";
+include "../../circomlib/circuits/gates.circom";
+include "../../circomlib/circuits/bitify.circom";
 
 template ParseJWTFieldSharedLogic(maxKVPairLen, maxNameLen, maxValueLen) {
     signal input field[maxKVPairLen]; // ASCII

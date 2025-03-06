@@ -2,7 +2,7 @@ pragma circom 2.1.3;
 
 // File taken from https://github.com/zkemail/zk-email-verify/blob/main/packages/circuits/helpers/base64.circom
 
-include "circomlib/circuits/comparators.circom";
+include "../../circomlib/circuits/comparators.circom";
 
 // http://0x80.pl/notesen/2016-01-17-sse-base64-decoding.html#vector-lookup-base
 // Modified to support Base64URL format instead of Base64

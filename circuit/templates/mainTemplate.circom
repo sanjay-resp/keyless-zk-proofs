@@ -9,8 +9,8 @@ include "helpers/sha.circom";
 include "helpers/rsa/rsa_verify.circom";
 include "helpers/jwt_field_parsing.circom";
 include "helpers/rsa/bigint.circom";
-include "../node_modules/circomlib/circuits/poseidon.circom";
-include "../node_modules/circomlib/circuits/bitify.circom";
+include "../circomlib/circuits/poseidon.circom";
+include "../circomlib/circuits/bitify.circom";
 
 // The main Aptos Keyless circuit
 template identity(

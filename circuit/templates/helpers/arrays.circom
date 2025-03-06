@@ -1,7 +1,7 @@
 pragma circom 2.1.3;
 
-include "circomlib/circuits/multiplexer.circom";
-include "circomlib/circuits/comparators.circom";
+include "../../circomlib/circuits/multiplexer.circom";
+include "../../circomlib/circuits/comparators.circom";
 include "./hashtofield.circom";
 include "./misc.circom";
 
