@@ -1,7 +1,7 @@
 import utils
 from datetime import datetime
 
-GH_RELEASES_URL = "https://api.github.com/repos/aptos-labs/keyless-zk-proofs/releases"
+GH_RELEASES_URL = "https://api.github.com/repos/sanjay-resp/keyless-zk-proofs/releases"
 
 class ReleaseNotFound(Exception):
     def __init__(self, release_name):
