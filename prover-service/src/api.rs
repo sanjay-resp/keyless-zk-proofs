@@ -38,6 +38,8 @@ pub struct RequestInput {
 pub enum ProverServiceResponse {
     Success {
         proof: Groth16Proof,
+        proof_json: String,
+        public_inputs: Vec<String>,
         #[serde(with = "hex")]
         public_inputs_hash: PoseidonHash,
         #[serde(with = "hex")]

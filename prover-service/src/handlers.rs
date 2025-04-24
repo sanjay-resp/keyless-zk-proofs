@@ -99,11 +99,6 @@ pub async fn prove_handler(
     let mut public_inputs = Vec::new();
     public_inputs.push(addr_seed.into_bigint().to_string());
     for key in keys {
-        let (_, value) = test_circuit_input_signals
-            .signals
-            .get_key_value(key)
-            .unwrap();
-
         if let Some((_key, signal)) = test_circuit_input_signals.signals.get_key_value(key) {
             public_inputs.extend(signal_to_strings(signal));
         }
@@ -123,7 +118,7 @@ pub async fn prove_handler(
     let g16vk = prepared_vk(&state.config.verification_key_path());
     let max_retries = 3;
     let mut retries = 0;
-    let (proof, _proof_json, internal_metrics) = loop {
+    let (proof, proof_json, internal_metrics) = loop {
         let (proof_json, internal_metrics) = prover_unlocked
             .prove(witness_file.path_str()?)
             .map_err(error::handle_prover_lib_error)?;
@@ -167,6 +162,8 @@ pub async fn prove_handler(
 
     let response = ProverServiceResponse::Success {
         proof,
+        public_inputs,
+        proof_json: proof_json.to_string(),
         public_inputs_hash,
         training_wheels_signature: bcs::to_bytes(&training_wheels_signature)
             .expect("Only unhandleable errors happen here."),

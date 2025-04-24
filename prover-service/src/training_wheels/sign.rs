@@ -35,6 +35,8 @@ pub fn verify(
         ProverServiceResponse::Success {
             proof,
             public_inputs_hash,
+            public_inputs,
+            proof_json,
             training_wheels_signature,
         } => {
             let ephem_tw_sig = EphemeralSignature::try_from(training_wheels_signature.as_slice())?;
