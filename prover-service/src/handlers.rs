@@ -3,7 +3,9 @@
 use crate::{
     api::{ProverServiceResponse, RequestInput},
     error::{self, ErrorWithCode, ThrowCodeOnError},
-    input_processing::{derive_circuit_input_signals, preprocess},
+    input_processing::{
+        derive_circuit_input_signals, preprocess, public_inputs_hash::compute_idc_hash,
+    },
     jwk_fetching::{get_federated_jwk, get_jwk},
     load_vk::prepared_vk,
     metrics,
@@ -11,21 +13,27 @@ use crate::{
     training_wheels,
     witness_gen::{witness_gen, PathStr},
 };
-use anyhow::Result;
+use anyhow::{bail, Result};
+use aptos_crypto::hash::CryptoHash;
+use aptos_keyless_common::input_processing::circuit_input_signals::CircuitInputSignal;
 use aptos_types::{
     jwks::rsa::RSA_JWK,
     keyless::{G1Bytes, G2Bytes, Groth16Proof},
     transaction::authenticator::EphemeralSignature,
 };
+use ark_bn254::{Bn254, Fr};
 use ark_ff::PrimeField;
+use ark_groth16::{Groth16, PreparedVerifyingKey, Proof};
 use axum::{extract::State, http::StatusCode, Json};
 use axum_extra::extract::WithRejection;
-
-use aptos_crypto::hash::CryptoHash;
 use serde::Deserialize;
 use std::{fs, sync::Arc, time::Instant};
 use tracing::{info, info_span, warn};
+use uint::construct_uint;
 
+construct_uint! {
+    pub struct U256(4);
+}
 pub async fn prove_handler(
     State(state): State<Arc<ProverServiceState>>,
     WithRejection(Json(body), _): WithRejection<Json<RequestInput>, error::ApiError>,
@@ -66,11 +74,18 @@ pub async fn prove_handler(
 
     training_wheels::validate_jwt_payload_parsing(&input).with_status(StatusCode::BAD_REQUEST)?;
 
+    let addr_seed = compute_idc_hash(
+        &input,
+        circuit_config,
+        input.pepper_fr,
+        &input.jwt_parts.payload_decoded()?,
+    )?;
+
     // TODO seems not super clean to output public_inputs_hash here
     let (circuit_input_signals, public_inputs_hash) =
         derive_circuit_input_signals(input, circuit_config)
             .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;
-
+    let test_circuit_input_signals = circuit_input_signals.clone();
     let formatted_input_str = serde_json::to_string(&circuit_input_signals.to_json_value())
         .map_err(anyhow::Error::new)
         .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;
@@ -79,6 +94,25 @@ pub async fn prove_handler(
     if state.config.enable_dangerous_logging {
         fs::write("formatted_input.json", &formatted_input_str).unwrap();
     }
+
+    let keys = ["iat_value", "exp_date", "exp_delta", "temp_pubkey"];
+    let mut public_inputs = Vec::new();
+    public_inputs.push(addr_seed.into_bigint().to_string());
+    for key in keys {
+        let (_, value) = test_circuit_input_signals
+            .signals
+            .get_key_value(key)
+            .unwrap();
+
+        if let Some((_key, signal)) = test_circuit_input_signals.signals.get_key_value(key) {
+            public_inputs.extend(signal_to_strings(signal));
+        }
+    }
+    public_inputs.push(
+        ark_bn254::Fr::from_le_bytes_mod_order(&public_inputs_hash)
+            .into_bigint()
+            .to_string(),
+    );
 
     let witness_file = witness_gen(&state.config, &formatted_input_str)
         .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;
@@ -93,6 +127,7 @@ pub async fn prove_handler(
         let (proof_json, internal_metrics) = prover_unlocked
             .prove(witness_file.path_str()?)
             .map_err(error::handle_prover_lib_error)?;
+
         // TODO constructing the response struct should be its own func, so that I can test it
         let proof = encode_proof(
             &serde_json::from_str(proof_json)
@@ -101,11 +136,10 @@ pub async fn prove_handler(
         )
         .with_status(StatusCode::INTERNAL_SERVER_ERROR)?;
 
+        info!("circuit inputs");
+
         let verify_result = proof
-            .verify_proof(
-                ark_bn254::Fr::from_le_bytes_mod_order(&public_inputs_hash),
-                &g16vk,
-            )
+            .verify_proof_internal(&public_inputs, &g16vk)
             .with_status(StatusCode::INTERNAL_SERVER_ERROR);
 
         match verify_result {
@@ -182,4 +216,67 @@ pub fn encode_proof(proof: &RapidsnarkProofResponse) -> Result<Groth16Proof> {
     let new_pi_c = G1Bytes::new_unchecked(&proof.pi_c[0], &proof.pi_c[1])?;
 
     Ok(Groth16Proof::new(new_pi_a, new_pi_b, new_pi_c))
+}
+
+pub trait Groth16ProofExt {
+    fn verify_proof_internal(
+        &self,
+        public_inputs: &Vec<String>,
+        pvk: &PreparedVerifyingKey<ark_bn254::Bn254>,
+    ) -> Result<()>;
+}
+
+impl Groth16ProofExt for Groth16Proof {
+    fn verify_proof_internal(
+        &self,
+        public_inputs: &Vec<String>,
+        pvk: &PreparedVerifyingKey<ark_bn254::Bn254>,
+    ) -> Result<()> {
+        let proof: Proof<Bn254> = Proof {
+            a: self.get_a().deserialize_into_affine()?,
+            b: self.get_b().deserialize_into_affine()?,
+            c: self.get_c().deserialize_into_affine()?,
+        };
+
+        let public_inputs_fr = prepare_public_inputs(public_inputs)
+            .with_status(StatusCode::INTERNAL_SERVER_ERROR)
+            .unwrap();
+        let verified = Groth16::<Bn254>::verify_proof(pvk, &proof, &public_inputs_fr)?;
+        if !verified {
+            bail!("groth16 proof verification failed")
+        }
+        Ok(())
+    }
+}
+
+pub type Number = [u8; 32];
+fn prepare_public_inputs(inputs: &Vec<String>) -> Result<Vec<Fr>> {
+    let mut parsed_inputs: Vec<Number> = Vec::with_capacity(inputs.len());
+    for input in inputs {
+        let a = U256::from_dec_str(input.as_str());
+        let _ = match a {
+            Ok(b) => {
+                let mut input_b: Number = [0; 32];
+                b.to_big_endian(input_b.as_mut_slice());
+                parsed_inputs.push(input_b);
+            }
+            Err(_) => {
+                bail!("Failed to parse input");
+            }
+        };
+    }
+    Ok(parsed_inputs
+        .into_iter()
+        .map(|x| Fr::from_be_bytes_mod_order(x.as_slice()))
+        .collect())
+}
+
+fn signal_to_strings(signal: &CircuitInputSignal) -> Vec<String> {
+    match signal {
+        CircuitInputSignal::Frs(frs) => frs.iter().map(|fr| fr.into_bigint().to_string()).collect(),
+        CircuitInputSignal::U64(num) => vec![num.to_string()],
+        CircuitInputSignal::Bytes(bytes) => bytes.iter().map(|b| b.to_string()).collect(),
+        CircuitInputSignal::Fr(_fp) => todo!(),
+        CircuitInputSignal::Limbs(_items) => todo!(),
+    }
 }

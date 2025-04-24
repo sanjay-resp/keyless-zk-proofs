@@ -7,7 +7,7 @@ use ark_bn254::Fr;
 use serde_json::Value;
 use std::{collections::BTreeMap, marker::PhantomData};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum CircuitInputSignal {
     U64(u64),
     Fr(Fr),
@@ -18,12 +18,12 @@ pub enum CircuitInputSignal {
 
 pub struct Unpadded;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Padded;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CircuitInputSignals<T> {
-    signals: BTreeMap<String, CircuitInputSignal>,
+    pub signals: BTreeMap<String, CircuitInputSignal>,
     t: PhantomData<T>,
 }
 

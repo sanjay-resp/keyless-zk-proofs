@@ -59,6 +59,8 @@ init-tracing-opentelemetry = { version = "0.14.1", features = [
   "otlp",
   "tracing_subscriber_ext",
 ] }
+
+uint = { version = "0.8", default-features = false }
 itertools = "0.13"
 jsonwebtoken = "8.1"
 lazy_static = "1.4.0"

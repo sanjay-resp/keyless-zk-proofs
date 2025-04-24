@@ -3172,7 +3172,7 @@ dependencies = [
  "serde",
  "serde_bytes",
  "thiserror",
- "uint",
+ "uint 0.9.5",
 ]
 
 [[package]]
@@ -4083,7 +4083,7 @@ dependencies = [
  "fixed-hash",
  "impl-codec",
  "impl-serde",
- "uint",
+ "uint 0.9.5",
 ]
 
 [[package]]
@@ -4265,6 +4265,7 @@ dependencies = [
  "tower-http",
  "tracing",
  "tracing-subscriber 0.3.18",
+ "uint 0.8.5",
 ]
 
 [[package]]
@@ -5827,6 +5828,18 @@ checksum = "ecce25dea8aeaadc44909f4c1226d22d84512fccd07d22447ecbad176bc09545"
 dependencies = [
  "quote",
  "syn 2.0.52",
+]
+
+[[package]]
+name = "uint"
+version = "0.8.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9db035e67dfaf7edd9aebfe8676afcd63eed53c8a4044fed514c8cccf1835177"
+dependencies = [
+ "byteorder",
+ "crunchy",
+ "rustc-hex",
+ "static_assertions",
 ]
 
 [[package]]
