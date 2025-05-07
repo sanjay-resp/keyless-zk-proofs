@@ -80,7 +80,7 @@ pub async fn prove_handler(
         input.pepper_fr,
         &input.jwt_parts.payload_decoded()?,
     )?;
-
+    let temp_input_store = input.clone();
     // TODO seems not super clean to output public_inputs_hash here
     let (circuit_input_signals, public_inputs_hash) =
         derive_circuit_input_signals(input, circuit_config)
@@ -95,9 +95,17 @@ pub async fn prove_handler(
         fs::write("formatted_input.json", &formatted_input_str).unwrap();
     }
 
-    let keys = ["iat_value", "exp_date", "exp_delta", "temp_pubkey"];
+    let keys = ["exp_date", "temp_pubkey"];
     let mut public_inputs = Vec::new();
     public_inputs.push(addr_seed.into_bigint().to_string());
+
+    let rsa_pubkey_hash = temp_input_store
+        .jwk
+        .to_poseidon_scalar()
+        .unwrap()
+        .into_bigint()
+        .to_string();
+    public_inputs.push(rsa_pubkey_hash);
     for key in keys {
         if let Some((_key, signal)) = test_circuit_input_signals.signals.get_key_value(key) {
             public_inputs.extend(signal_to_strings(signal));

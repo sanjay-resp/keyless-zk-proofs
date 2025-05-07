@@ -6,7 +6,7 @@ use aptos_types::{jwks::rsa::RSA_JWK, transaction::authenticator::EphemeralPubli
 use ark_bn254::Fr;
 use std::sync::Arc;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Input {
     pub jwt_parts: JwtParts,
     pub jwk: Arc<RSA_JWK>,

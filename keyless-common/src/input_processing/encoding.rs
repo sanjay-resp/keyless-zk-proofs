@@ -99,7 +99,7 @@ impl FromHex for Fr {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct JwtParts {
     header: String,
     payload: String,

@@ -17,7 +17,7 @@ RUN /root/.cargo/bin/cargo build --release -p prover-service \
 # Download trusted setup and witness gen binaries
 ENV RESOURCES_DIR=/resources
 
-RUN ./scripts/task.sh setup download-ceremonies-for-releases --witness-gen-type c vl-circuit-v1 vl-circuit-v1
+RUN ./scripts/task.sh setup download-ceremonies-for-releases --witness-gen-type c second-release second-release
 
 
 # The image that is actually deployed
