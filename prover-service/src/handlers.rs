@@ -27,7 +27,7 @@ use ark_groth16::{Groth16, PreparedVerifyingKey, Proof};
 use axum::{extract::State, http::StatusCode, Json};
 use axum_extra::extract::WithRejection;
 use serde::Deserialize;
-use std::{fs, sync::Arc, time::Instant};
+use std::{collections::HashMap, fs, sync::Arc, time::Instant};
 use tracing::{info, info_span, warn};
 use uint::construct_uint;
 
@@ -191,6 +191,20 @@ pub async fn prove_handler(
 pub async fn healthcheck_handler() -> (StatusCode, &'static str) {
     // TODO: CHECK FOR A REAL STATUS OF PROVER HERE?
     (StatusCode::OK, "OK")
+}
+pub async fn pub_key_hash_handler(
+    State(state): State<Arc<ProverServiceState>>,
+    WithRejection(Json(jwks), _): WithRejection<Json<Vec<RSA_JWK>>, error::ApiError>,
+) -> Result<Json<String>, ErrorWithCode> {
+    let span = info_span!("pub_key_hash_handler");
+    let _enter = span.enter();
+    let mut jwk_hash = HashMap::new();
+    for jwk in jwks.iter() {
+        let rsa_pubkey_hash = jwk.to_poseidon_scalar().unwrap().into_bigint().to_string();
+        jwk_hash.insert(jwk.kid.clone(), rsa_pubkey_hash);
+    }
+    let result_json = serde_json::to_string_pretty(&jwk_hash).unwrap();
+    Ok(Json(result_json))
 }
 
 /// On all unrecognized routes, return 404.

@@ -70,6 +70,7 @@ async fn main() {
             "/v0/prove",
             post(handlers::prove_handler).fallback(handlers::fallback_handler),
         )
+        .route("/v0/pub-key-hash", post(handlers::pub_key_hash_handler))
         .route("/healthcheck", get(handlers::healthcheck_handler))
         .fallback(handlers::fallback_handler)
         .with_state(state.clone())
